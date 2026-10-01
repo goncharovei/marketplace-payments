@@ -39,7 +39,17 @@ deptrac:
         - type: classLike
           value: ^App\\Console\\.*
 
+    # Doctrine mapping attributes only (#[ORM\Entity], #[ORM\Column], etc.).
+    # These are declarative metadata, not framework behavior.
+    # Domain is allowed to use them without polluting itself with ORM logic.
+    - name: DoctrineMapping
+      collectors:
+        - type: classLike
+          value: ^Doctrine\\ORM\\Mapping\\.*
+
     # Framework and third-party libraries.
+    # Note: Doctrine\ORM\Mapping is intentionally excluded here
+    # (it lives in the DoctrineMapping layer above).
     - name: Framework
       collectors:
         - type: classLike
@@ -47,7 +57,7 @@ deptrac:
         - type: classLike
           value: ^Laravel\\.*
         - type: classLike
-          value: ^Doctrine\\.*
+          value: ^Doctrine\\(?!ORM\\Mapping).*
         - type: classLike
           value: ^Ecotone\\.*
         - type: classLike
@@ -57,8 +67,10 @@ deptrac:
 
   ruleset:
     Domain:
-      # Domain depends only on itself. No framework, no infrastructure.
+      # Domain depends only on itself and Doctrine mapping attributes.
+      # No framework behavior, no EntityManager, no DBAL, no repositories.
       - Domain
+      - DoctrineMapping
 
     Application:
       # Application depends only on Domain.
@@ -71,6 +83,7 @@ deptrac:
       - Application
       - Infrastructure
       - Framework
+      - DoctrineMapping
 
     Presentation:
       # Presentation calls use cases from Application.
@@ -80,6 +93,7 @@ deptrac:
       - Presentation
       - Laravel
       - Framework
+      - DoctrineMapping
 
     Laravel:
       # Standard Laravel code can depend on anything.
@@ -88,3 +102,8 @@ deptrac:
       - Infrastructure
       - Laravel
       - Framework
+      - DoctrineMapping
+
+    DoctrineMapping:
+      # Mapping attributes have no dependencies of their own.
+      - DoctrineMapping
