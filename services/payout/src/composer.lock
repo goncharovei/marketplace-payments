@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0253f6d102140f5fd57c4c11da09eb12",
+    "content-hash": "c12fc727a9089b058e1275c48928f666",
     "packages": [
         {
             "name": "brick/math",
@@ -1030,6 +1030,100 @@
             "time": "2025-10-31T18:51:33+00:00"
         },
         {
+            "name": "ecotone/dbal",
+            "version": "1.327.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ecotoneframework/dbal.git",
+                "reference": "8b82a1911a02f3e9d10c2c4d6c65cc6090764b14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ecotoneframework/dbal/zipball/8b82a1911a02f3e9d10c2c4d6c65cc6090764b14",
+                "reference": "8b82a1911a02f3e9d10c2c4d6c65cc6090764b14",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.9|^4.0",
+                "ecotone/enqueue": "~1.327.0",
+                "enqueue/dsn": "^0.10.4"
+            },
+            "conflict": {
+                "enqueue/dbal": "*"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.13|^2.0",
+                "doctrine/cache": "^1.0.0|^2.0",
+                "doctrine/orm": "^2.11|^3.0",
+                "doctrine/persistence": "^2.5|^3.4|^4.0",
+                "ecotone/jms-converter": "~1.327.0",
+                "phpstan/phpstan": "^1.8|^2.0",
+                "phpunit/phpunit": "^10.5|^11.0|^12.0",
+                "symfony/expression-language": "^6.4|^7.0|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "ecotone": {
+                    "repository": "dbal"
+                },
+                "branch-alias": {
+                    "dev-main": "1.327.x-dev"
+                },
+                "license-info": {
+                    "Apache-2.0": {
+                        "url": "https://github.com/ecotoneframework/ecotone-dev/blob/main/LICENSE",
+                        "name": "Apache License 2.0",
+                        "description": "Allows to use non Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    },
+                    "proprietary": {
+                        "name": "Enterprise License",
+                        "description": "Allows to use Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    }
+                },
+                "release-time": "2026-09-27 18:02:04"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ecotone\\Dbal\\": "src",
+                    "Enqueue\\Dbal\\": "src/EnqueueDbal"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Dariusz Gafka",
+                    "email": "support@simplycodedsoftware.com"
+                }
+            ],
+            "description": "Doctrine DBAL integration for Ecotone — database-backed message channel, outbox pattern, dead letter queue, durable saga state storage, and document store.",
+            "homepage": "https://docs.ecotone.tech/",
+            "keywords": [
+                "dbal",
+                "dead-letter-queue",
+                "doctrine",
+                "document-store",
+                "durable-workflows",
+                "ecotone",
+                "messaging",
+                "outbox",
+                "saga"
+            ],
+            "support": {
+                "source": "https://github.com/ecotoneframework/dbal/tree/1.327.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dgafka",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-27T18:02:40+00:00"
+        },
+        {
             "name": "ecotone/ecotone",
             "version": "1.327.0",
             "source": {
@@ -1128,6 +1222,188 @@
             "time": "2026-09-27T18:02:43+00:00"
         },
         {
+            "name": "ecotone/enqueue",
+            "version": "1.327.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ecotoneframework/enqueue.git",
+                "reference": "f603f42858e2f0c385c9cf70eed3ff35c5d59848"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ecotoneframework/enqueue/zipball/f603f42858e2f0c385c9cf70eed3ff35c5d59848",
+                "reference": "f603f42858e2f0c385c9cf70eed3ff35c5d59848",
+                "shasum": ""
+            },
+            "require": {
+                "ecotone/ecotone": "~1.327.0",
+                "enqueue/dsn": "^0.10.4",
+                "queue-interop/queue-interop": "^0.8"
+            },
+            "require-dev": {
+                "enqueue/null": "^0.10.18",
+                "phpstan/phpstan": "^1.8|^2.0",
+                "phpunit/phpunit": "^10.5|^11.0|^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "ecotone": {
+                    "repository": "enqueue"
+                },
+                "branch-alias": {
+                    "dev-main": "1.327.x-dev"
+                },
+                "license-info": {
+                    "Apache-2.0": {
+                        "url": "https://github.com/ecotoneframework/ecotone-dev/blob/main/LICENSE",
+                        "name": "Apache License 2.0",
+                        "description": "Allows to use non Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    },
+                    "proprietary": {
+                        "name": "Enterprise License",
+                        "description": "Allows to use Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    }
+                },
+                "release-time": "2026-09-27 18:02:04"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ecotone\\Enqueue\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Dariusz Gafka",
+                    "email": "support@simplycodedsoftware.com"
+                }
+            ],
+            "description": "Enqueue adapter layer for Ecotone — shared base for AMQP, Redis, and SQS transports.",
+            "homepage": "https://docs.ecotone.tech/",
+            "keywords": [
+                "AMQP",
+                "async-messaging",
+                "ecotone",
+                "enqueue",
+                "message-broker",
+                "redis",
+                "sqs"
+            ],
+            "support": {
+                "source": "https://github.com/ecotoneframework/enqueue/tree/1.327.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dgafka",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-27T18:02:38+00:00"
+        },
+        {
+            "name": "ecotone/laravel",
+            "version": "1.327.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ecotoneframework/laravel.git",
+                "reference": "d1892ccca686388074189f570ad1e8245fb8d5e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ecotoneframework/laravel/zipball/d1892ccca686388074189f570ad1e8245fb8d5e8",
+                "reference": "d1892ccca686388074189f570ad1e8245fb8d5e8",
+                "shasum": ""
+            },
+            "require": {
+                "ecotone/ecotone": "~1.327.0",
+                "laravel/framework": "^9.5.2|^10.0|^11.0|^12.0|^13.0"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^4.0",
+                "ecotone/dbal": "~1.327.0",
+                "guzzlehttp/psr7": "^2.0|^3.0",
+                "moneyphp/money": "^4.1.0",
+                "nesbot/carbon": "^2.71|^3.0",
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "phpstan/phpstan": "^1.8|^2.0",
+                "phpunit/phpunit": "^10.5|^11.0|^12.0",
+                "symfony/expression-language": "^6.4|^7.0|^8.0",
+                "timacdonald/log-fake": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "ecotone": {
+                    "repository": "laravel"
+                },
+                "laravel": {
+                    "providers": [
+                        "Ecotone\\Laravel\\EcotoneProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "1.327.x-dev"
+                },
+                "license-info": {
+                    "Apache-2.0": {
+                        "url": "https://github.com/ecotoneframework/ecotone-dev/blob/main/LICENSE",
+                        "name": "Apache License 2.0",
+                        "description": "Allows to use non Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    },
+                    "proprietary": {
+                        "name": "Enterprise License",
+                        "description": "Allows to use Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
+                    }
+                },
+                "release-time": "2026-09-27 18:02:04"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ecotone\\Laravel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Dariusz Gafka",
+                    "email": "support@simplycodedsoftware.com"
+                }
+            ],
+            "description": "Ecotone for Laravel — CQRS, Event Sourcing, Sagas, Durable Workflows, and Outbox on top of Laravel Queue, via PHP attributes.",
+            "homepage": "https://docs.ecotone.tech/",
+            "keywords": [
+                "cqrs",
+                "ddd",
+                "durable-workflows",
+                "ecotone",
+                "eip",
+                "event-sourcing",
+                "laravel",
+                "laravel-queue",
+                "messaging",
+                "outbox",
+                "sagas",
+                "workflow"
+            ],
+            "support": {
+                "source": "https://github.com/ecotoneframework/laravel/tree/1.327.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dgafka",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-27T18:02:38+00:00"
+        },
+        {
             "name": "egulias/email-validator",
             "version": "4.0.4",
             "source": {
@@ -1193,6 +1469,59 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "enqueue/dsn",
+            "version": "0.10.27",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-enqueue/dsn.git",
+                "reference": "43e223c984bec7095d6a0d4ff70bb3d9e084fb30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-enqueue/dsn/zipball/43e223c984bec7095d6a0d4ff70bb3d9e084fb30",
+                "reference": "43e223c984bec7095d6a0d4ff70bb3d9e084fb30",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.10.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Enqueue\\Dsn\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Parse DSN",
+            "homepage": "https://enqueue.forma-pro.com/",
+            "keywords": [
+                "dsn",
+                "parse"
+            ],
+            "support": {
+                "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md",
+                "email": "opensource@forma-pro.com",
+                "forum": "https://gitter.im/php-enqueue/Lobby",
+                "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
+                "source": "https://github.com/php-enqueue/enqueue-dev"
+            },
+            "time": "2025-12-21T18:13:12+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -3998,6 +4327,57 @@
                 "source": "https://github.com/bobthecow/psysh/tree/v0.12.24"
             },
             "time": "2026-06-29T15:41:09+00:00"
+        },
+        {
+            "name": "queue-interop/queue-interop",
+            "version": "0.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/queue-interop/queue-interop.git",
+                "reference": "752db86fee6d9fd11d2e34191afe212c64b96fa7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/queue-interop/queue-interop/zipball/752db86fee6d9fd11d2e34191afe212c64b96fa7",
+                "reference": "752db86fee6d9fd11d2e34191afe212c64b96fa7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.5 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
+                "queue-interop/queue-spec": "^0.6@dev"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Interop\\Queue\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Promoting the interoperability of MQs objects. Based on Java JMS",
+            "homepage": "https://github.com/queue-interop/queue-interop",
+            "keywords": [
+                "MQ",
+                "jms",
+                "message queue",
+                "messaging",
+                "queue"
+            ],
+            "support": {
+                "issues": "https://github.com/queue-interop/queue-interop/issues",
+                "source": "https://github.com/queue-interop/queue-interop/tree/0.8.2"
+            },
+            "time": "2025-02-21T08:24:49+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
