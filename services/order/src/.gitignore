@@ -21,3 +21,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Tool caches
+/storage/framework/phpstan
+/.deptrac.cache
+/.phpstan.cache
+/.php-cs-fixer.cache

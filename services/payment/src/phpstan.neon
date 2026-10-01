@@ -1,0 +1,28 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - tests
+
+    level: 8
+
+    # Exclude standard Laravel code that is not part of our DDD layers yet.
+    # (?) marks paths as optional - PHPStan won't fail if they don't exist.
+    excludePaths:
+        - app/Models (?)
+        - app/Providers (?)
+        - app/Http (?)
+        - app/Console (?)
+
+    # In PHPStan 2.x these are configured via ignoreErrors identifiers.
+    # The list may contain patterns for errors that don't exist yet -
+    # reportUnmatchedIgnoredErrors=false prevents failures in that case.
+    ignoreErrors:
+        - identifier: missingType.iterableValue
+        - identifier: missingType.generics
+
+    reportUnmatchedIgnoredErrors: false
+
+    tmpDir: storage/framework/phpstan

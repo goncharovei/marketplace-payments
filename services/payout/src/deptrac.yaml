@@ -1,0 +1,90 @@
+deptrac:
+  paths:
+    - ./app
+  exclude_files:
+    - '#.*test.*#'
+    - '#.*Test\.php$#'
+
+  layers:
+    - name: Domain
+      collectors:
+        - type: classLike
+          value: ^App\\Domain\\.*
+
+    - name: Application
+      collectors:
+        - type: classLike
+          value: ^App\\Application\\.*
+
+    - name: Infrastructure
+      collectors:
+        - type: classLike
+          value: ^App\\Infrastructure\\.*
+
+    - name: Presentation
+      collectors:
+        - type: classLike
+          value: ^App\\Presentation\\.*
+
+    # Standard Laravel code (Models, Providers, Http, Console).
+    # Not subject to DDD rules, but must be allowed to depend on Laravel.
+    - name: Laravel
+      collectors:
+        - type: classLike
+          value: ^App\\Models\\.*
+        - type: classLike
+          value: ^App\\Providers\\.*
+        - type: classLike
+          value: ^App\\Http\\.*
+        - type: classLike
+          value: ^App\\Console\\.*
+
+    # Framework and third-party libraries.
+    - name: Framework
+      collectors:
+        - type: classLike
+          value: ^Illuminate\\.*
+        - type: classLike
+          value: ^Laravel\\.*
+        - type: classLike
+          value: ^Doctrine\\.*
+        - type: classLike
+          value: ^Ecotone\\.*
+        - type: classLike
+          value: ^Symfony\\.*
+        - type: classLike
+          value: ^Psr\\.*
+
+  ruleset:
+    Domain:
+      # Domain depends only on itself. No framework, no infrastructure.
+      - Domain
+
+    Application:
+      # Application depends only on Domain.
+      - Domain
+      - Application
+
+    Infrastructure:
+      # Infrastructure implements interfaces from Domain/Application.
+      - Domain
+      - Application
+      - Infrastructure
+      - Framework
+
+    Presentation:
+      # Presentation calls use cases from Application.
+      - Domain
+      - Application
+      - Infrastructure
+      - Presentation
+      - Laravel
+      - Framework
+
+    Laravel:
+      # Standard Laravel code can depend on anything.
+      - Domain
+      - Application
+      - Infrastructure
+      - Laravel
+      - Framework
