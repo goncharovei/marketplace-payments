@@ -15,6 +15,7 @@ use App\Domain\ValueObject\Money;
 use App\Domain\ValueObject\OrderId;
 use App\Domain\ValueObject\SellerId;
 use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
 use DomainException;
 
 /**
@@ -23,20 +24,30 @@ use DomainException;
  * Protects business invariants and records domain events
  * for everything that happens inside the aggregate.
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'orders')]
 final class Order
 {
+    #[ORM\Id]
+    #[ORM\Column(type: 'order_id')]
     private OrderId $id;
 
+    #[ORM\Column(type: 'buyer_id')]
     private BuyerId $buyerId;
 
+    #[ORM\Column(type: 'seller_id')]
     private SellerId $sellerId;
 
+    #[ORM\Column(type: 'order_status')]
     private OrderStatus $status;
 
+    #[ORM\Column(type: 'order_item_collection')]
     private OrderItemCollection $items;
 
+    #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $updatedAt;
 
     /** @var DomainEvent[] */
