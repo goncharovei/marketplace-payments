@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ecotone/amqp": "^1.327",
         "ecotone/dbal": "^1.327",
         "ecotone/laravel": "^1.327",
         "laravel-doctrine/migrations": "^3.4",
