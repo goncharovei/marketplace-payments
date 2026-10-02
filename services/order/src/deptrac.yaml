@@ -27,7 +27,6 @@ deptrac:
           value: ^App\\Presentation\\.*
 
     # Standard Laravel code (Models, Providers, Http, Console).
-    # Not subject to DDD rules, but must be allowed to depend on Laravel.
     - name: Laravel
       collectors:
         - type: classLike
@@ -39,17 +38,24 @@ deptrac:
         - type: classLike
           value: ^App\\Console\\.*
 
-    # Doctrine mapping attributes only (#[ORM\Entity], #[ORM\Column], etc.).
-    # These are declarative metadata, not framework behavior.
-    # Domain is allowed to use them without polluting itself with ORM logic.
+    # Doctrine mapping attributes (#[ORM\Entity], #[ORM\Column], etc.).
     - name: DoctrineMapping
       collectors:
         - type: classLike
           value: ^Doctrine\\ORM\\Mapping\\.*
 
+    # Ecotone messaging attributes (#[CommandHandler], #[EventHandler],
+    # #[Repository], #[ServiceContext], #[Saga], etc.).
+    - name: EcotoneAttribute
+      collectors:
+        - type: classLike
+          value: ^Ecotone\\Modelling\\Attribute\\.*
+        - type: classLike
+          value: ^Ecotone\\Messaging\\Attribute\\.*
+
     # Framework and third-party libraries.
-    # Note: Doctrine\ORM\Mapping is intentionally excluded here
-    # (it lives in the DoctrineMapping layer above).
+    # Explicitly exclude Doctrine mapping and Ecotone attribute namespaces
+    # so they belong only to their dedicated layers above.
     - name: Framework
       collectors:
         - type: classLike
@@ -59,7 +65,7 @@ deptrac:
         - type: classLike
           value: ^Doctrine\\(?!ORM\\Mapping).*
         - type: classLike
-          value: ^Ecotone\\.*
+          value: ^Ecotone\\(?!Modelling\\Attribute|Messaging\\Attribute).*
         - type: classLike
           value: ^Symfony\\.*
         - type: classLike
@@ -67,26 +73,24 @@ deptrac:
 
   ruleset:
     Domain:
-      # Domain depends only on itself and Doctrine mapping attributes.
-      # No framework behavior, no EntityManager, no DBAL, no repositories.
       - Domain
       - DoctrineMapping
 
     Application:
-      # Application depends only on Domain.
+      # Application handlers use Ecotone attributes for registration.
       - Domain
       - Application
+      - EcotoneAttribute
 
     Infrastructure:
-      # Infrastructure implements interfaces from Domain/Application.
       - Domain
       - Application
       - Infrastructure
       - Framework
       - DoctrineMapping
+      - EcotoneAttribute
 
     Presentation:
-      # Presentation calls use cases from Application.
       - Domain
       - Application
       - Infrastructure
@@ -94,16 +98,19 @@ deptrac:
       - Laravel
       - Framework
       - DoctrineMapping
+      - EcotoneAttribute
 
     Laravel:
-      # Standard Laravel code can depend on anything.
       - Domain
       - Application
       - Infrastructure
       - Laravel
       - Framework
       - DoctrineMapping
+      - EcotoneAttribute
 
     DoctrineMapping:
-      # Mapping attributes have no dependencies of their own.
       - DoctrineMapping
+
+    EcotoneAttribute:
+      - EcotoneAttribute
