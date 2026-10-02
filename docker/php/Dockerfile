@@ -12,7 +12,8 @@ RUN apk add --no-cache \
     bash \
     unzip \
     zip \
-    linux-headers
+    linux-headers \
+    rabbitmq-c-dev
 
 # PHP extensions
 RUN docker-php-ext-install \
@@ -25,6 +26,12 @@ RUN docker-php-ext-install \
     zip \
     sockets \
     opcache
+
+# AMQP extension (for RabbitMQ)
+RUN apk add --no-cache --virtual .amqp-build-deps $PHPIZE_DEPS \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp \
+    && apk del .amqp-build-deps
 
 # Redis via PECL
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
