@@ -6,6 +6,8 @@ namespace App\Infrastructure\Persistence\Doctrine\Types;
 
 use App\Domain\Model\OrderItem;
 use App\Domain\Model\OrderItemCollection;
+use App\Domain\ValueObject\Money;
+use App\Domain\ValueObject\ProductId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -31,7 +33,7 @@ final class OrderItemCollectionType extends Type
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
-        if (!$value instanceof OrderItemCollection) {
+        if (! $value instanceof OrderItemCollection) {
             return null;
         }
 
@@ -60,15 +62,15 @@ final class OrderItemCollectionType extends Type
             $value = json_decode($value, true, flags: JSON_THROW_ON_ERROR);
         }
 
-        if (!is_array($value) || $value === []) {
+        if (! is_array($value) || $value === []) {
             return OrderItemCollection::empty();
         }
 
         $items = array_map(
             fn (array $item): OrderItem => OrderItem::create(
-                \App\Domain\ValueObject\ProductId::fromString($item['productId']),
+                ProductId::fromString($item['productId']),
                 (int) $item['quantity'],
-                \App\Domain\ValueObject\Money::of(
+                Money::of(
                     (int) $item['price']['amount'],
                     $item['price']['currency'],
                 ),

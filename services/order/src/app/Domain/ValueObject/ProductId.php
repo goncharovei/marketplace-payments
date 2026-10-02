@@ -29,6 +29,14 @@ final readonly class ProductId
         return $this->value;
     }
 
+    /**
+     * Required by Doctrine for building entity identifiers.
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
     public function equals(self $other): bool
     {
         return $this->value === $other->value;

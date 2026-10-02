@@ -30,7 +30,7 @@ final class OrderItemType extends Type
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?array
     {
-        if (!$value instanceof OrderItem) {
+        if (! $value instanceof OrderItem) {
             return null;
         }
 
