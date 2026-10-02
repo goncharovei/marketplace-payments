@@ -32,13 +32,13 @@ Services communicate via RabbitMQ through a Distributed Bus.
 
 ## Quick Start
 
-\`\`\`bash
+```bash
 git clone https://github.com/goncharovei/marketplace-payments.git
 cd marketplace-payments
 cp .env.example .env
 # edit .env - set DB and RabbitMQ passwords
 docker compose up -d
-\`\`\`
+```
 
 Services:
 - http://localhost:8001 — Order
