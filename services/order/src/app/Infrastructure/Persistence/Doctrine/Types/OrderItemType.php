@@ -8,6 +8,7 @@ use App\Domain\Model\OrderItem;
 use App\Domain\ValueObject\Money;
 use App\Domain\ValueObject\ProductId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -20,6 +21,10 @@ final class OrderItemType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        if ($platform instanceof PostgreSQLPlatform) {
+            return $platform->getJsonbTypeDeclarationSQL($column);
+        }
+
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 

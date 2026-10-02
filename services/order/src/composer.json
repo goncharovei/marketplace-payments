@@ -9,6 +9,7 @@
         "php": "^8.2",
         "ecotone/dbal": "^1.327",
         "ecotone/laravel": "^1.327",
+        "laravel-doctrine/migrations": "^3.4",
         "laravel-doctrine/orm": "^3.3",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9"
