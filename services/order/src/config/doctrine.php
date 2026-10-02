@@ -123,7 +123,12 @@ return [
     | Create a custom or override a Doctrine Type
     |--------------------------------------------------------------------------
     */
-    'custom_types'               => [
+    'custom_types' => [
+        'order_id'     => \App\Infrastructure\Persistence\Doctrine\Types\OrderIdType::class,
+        'buyer_id'     => \App\Infrastructure\Persistence\Doctrine\Types\BuyerIdType::class,
+        'seller_id'    => \App\Infrastructure\Persistence\Doctrine\Types\SellerIdType::class,
+        'product_id'   => \App\Infrastructure\Persistence\Doctrine\Types\ProductIdType::class,
+        'order_status' => \App\Infrastructure\Persistence\Doctrine\Types\OrderStatusType::class
     ],
     /*
     |--------------------------------------------------------------------------
