@@ -128,7 +128,9 @@ return [
         'buyer_id'     => \App\Infrastructure\Persistence\Doctrine\Types\BuyerIdType::class,
         'seller_id'    => \App\Infrastructure\Persistence\Doctrine\Types\SellerIdType::class,
         'product_id'   => \App\Infrastructure\Persistence\Doctrine\Types\ProductIdType::class,
-        'order_status' => \App\Infrastructure\Persistence\Doctrine\Types\OrderStatusType::class
+        'order_status' => \App\Infrastructure\Persistence\Doctrine\Types\OrderStatusType::class,
+        'order_item'              => \App\Infrastructure\Persistence\Doctrine\Types\OrderItemType::class,
+        'order_item_collection'   => \App\Infrastructure\Persistence\Doctrine\Types\OrderItemCollectionType::class
     ],
     /*
     |--------------------------------------------------------------------------
