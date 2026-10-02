@@ -68,6 +68,9 @@ deptrac:
           value: ^Ecotone\\(?!Modelling\\Attribute|Messaging\\Attribute).*
         - type: classLike
           value: ^Symfony\\.*
+
+    - name: Psr
+      collectors:
         - type: classLike
           value: ^Psr\\.*
 
@@ -81,6 +84,7 @@ deptrac:
       - Domain
       - Application
       - EcotoneAttribute
+      - Psr
 
     Infrastructure:
       - Domain

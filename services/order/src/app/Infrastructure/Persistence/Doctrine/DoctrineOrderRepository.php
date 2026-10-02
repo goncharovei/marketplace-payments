@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine;
 
+use App\Domain\Event\DomainEventPublisher;
 use App\Domain\Model\Order;
 use App\Domain\Repository\OrderRepository;
 use App\Domain\ValueObject\OrderId;
@@ -19,12 +20,15 @@ final readonly class DoctrineOrderRepository implements OrderRepository
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private DomainEventPublisher $eventPublisher,
     ) {}
 
     public function save(Order $order): void
     {
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+
+        $this->eventPublisher->publish(...$order->releaseEvents());
     }
 
     public function findById(OrderId $id): ?Order
