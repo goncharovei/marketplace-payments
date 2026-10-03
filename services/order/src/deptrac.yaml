@@ -44,14 +44,20 @@ deptrac:
         - type: classLike
           value: ^Doctrine\\ORM\\Mapping\\.*
 
-    # Ecotone messaging attributes (#[CommandHandler], #[EventHandler],
-    # #[Repository], #[ServiceContext], #[Saga], etc.).
-    - name: EcotoneAttribute
+    # Ecotone public API: attributes (#[CommandHandler], #[EventHandler])
+    # and bus interfaces (CommandBus, EventBus, DistributedBus).
+    - name: EcotoneMessaging
       collectors:
         - type: classLike
           value: ^Ecotone\\Modelling\\Attribute\\.*
         - type: classLike
           value: ^Ecotone\\Messaging\\Attribute\\.*
+        - type: classLike
+          value: ^Ecotone\\Modelling\\CommandBus$
+        - type: classLike
+          value: ^Ecotone\\Modelling\\EventBus$
+        - type: classLike
+          value: ^Ecotone\\Modelling\\DistributedBus$
 
     # Framework and third-party libraries.
     # Explicitly exclude Doctrine mapping and Ecotone attribute namespaces
@@ -65,7 +71,7 @@ deptrac:
         - type: classLike
           value: ^Doctrine\\(?!ORM\\Mapping).*
         - type: classLike
-          value: ^Ecotone\\(?!Modelling\\Attribute|Messaging\\Attribute).*
+          value: ^Ecotone\\(?!Modelling\\Attribute|Messaging\\Attribute|Modelling\\CommandBus|Modelling\\EventBus|Modelling\\DistributedBus).*
         - type: classLike
           value: ^Symfony\\.*
 
@@ -83,7 +89,7 @@ deptrac:
       # Application handlers use Ecotone attributes for registration.
       - Domain
       - Application
-      - EcotoneAttribute
+      - EcotoneMessaging
       - Psr
 
     Infrastructure:
@@ -92,7 +98,7 @@ deptrac:
       - Infrastructure
       - Framework
       - DoctrineMapping
-      - EcotoneAttribute
+      - EcotoneMessaging
 
     Presentation:
       - Domain
@@ -102,7 +108,7 @@ deptrac:
       - Laravel
       - Framework
       - DoctrineMapping
-      - EcotoneAttribute
+      - EcotoneMessaging
 
     Laravel:
       - Domain
@@ -111,10 +117,10 @@ deptrac:
       - Laravel
       - Framework
       - DoctrineMapping
-      - EcotoneAttribute
+      - EcotoneMessaging
 
     DoctrineMapping:
       - DoctrineMapping
 
-    EcotoneAttribute:
-      - EcotoneAttribute
+    EcotoneMessaging:
+      - EcotoneMessaging

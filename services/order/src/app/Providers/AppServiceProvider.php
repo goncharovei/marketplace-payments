@@ -6,6 +6,7 @@ use App\Domain\Event\DomainEventPublisher;
 use App\Domain\Repository\OrderRepository;
 use App\Infrastructure\Messaging\EcotoneDomainEventPublisher;
 use App\Infrastructure\Persistence\Doctrine\DoctrineOrderRepository;
+use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
             DomainEventPublisher::class,
             EcotoneDomainEventPublisher::class,
         );
+
+        $this->app->singleton(AmqpConnectionFactory::class, function (): AmqpConnectionFactory {
+            return new AmqpConnectionFactory(config('amqp.dsn'));
+        });
     }
 
     /**
