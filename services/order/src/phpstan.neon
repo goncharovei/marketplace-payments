@@ -25,6 +25,8 @@ parameters:
         - identifier: missingType.generics
         - identifier: property.notFound
           path: tests/Feature/*
+        - identifier: method.notFound
+          path: tests/Feature/*
 
     reportUnmatchedIgnoredErrors: false
 
