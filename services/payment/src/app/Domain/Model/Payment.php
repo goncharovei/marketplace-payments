@@ -17,6 +17,7 @@ use App\Domain\ValueObject\OrderId;
 use App\Domain\ValueObject\PaymentId;
 use App\Domain\ValueObject\RefundId;
 use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
 use DomainException;
 
 /**
@@ -27,29 +28,43 @@ use DomainException;
  *   Initiated → Failed
  *   Captured → Refunded (full) / PartiallyRefunded
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'payments')]
 final class Payment
 {
+    #[ORM\Id]
+    #[ORM\Column(type: 'payment_id')]
     private PaymentId $id;
 
+    #[ORM\Column(type: 'order_id')]
     private OrderId $orderId;
 
+    #[ORM\Column(type: 'buyer_id')]
     private BuyerId $buyerId;
 
+    #[ORM\Column(type: 'money')]
     private Money $amount;
 
+    #[ORM\Column(type: 'payment_method')]
     private PaymentMethod $method;
 
+    #[ORM\Column(type: 'payment_status')]
     private PaymentStatus $status;
 
+    #[ORM\Column(type: 'external_transaction_id', nullable: true)]
     private ?ExternalTransactionId $externalId;
 
+    #[ORM\Column(type: 'money')]
     private Money $refundedAmount;
 
     /** @var Refund[] */
+    #[ORM\Column(type: 'refund_collection', options: ['jsonb' => true])]
     private array $refunds;
 
+    #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $updatedAt;
 
     /** @var DomainEvent[] */

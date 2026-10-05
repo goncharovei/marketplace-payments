@@ -123,7 +123,16 @@ return [
     | Create a custom or override a Doctrine Type
     |--------------------------------------------------------------------------
     */
-    'custom_types'               => [
+    'custom_types' => [
+        'payment_id'              => \App\Infrastructure\Persistence\Doctrine\Types\PaymentIdType::class,
+        'refund_id'               => \App\Infrastructure\Persistence\Doctrine\Types\RefundIdType::class,
+        'order_id'                => \App\Infrastructure\Persistence\Doctrine\Types\OrderIdType::class,
+        'buyer_id'                => \App\Infrastructure\Persistence\Doctrine\Types\BuyerIdType::class,
+        'external_transaction_id' => \App\Infrastructure\Persistence\Doctrine\Types\ExternalTransactionIdType::class,
+        'payment_status'          => \App\Infrastructure\Persistence\Doctrine\Types\PaymentStatusType::class,
+        'payment_method'          => \App\Infrastructure\Persistence\Doctrine\Types\PaymentMethodType::class,
+        'refund_collection'       => \App\Infrastructure\Persistence\Doctrine\Types\RefundCollectionType::class,
+        'money' => \App\Infrastructure\Persistence\Doctrine\Types\MoneyType::class,
     ],
     /*
     |--------------------------------------------------------------------------

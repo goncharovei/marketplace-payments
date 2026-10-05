@@ -33,6 +33,15 @@ final class Refund
         return new self($id, $amount, $reason, new DateTimeImmutable);
     }
 
+    public static function restore(
+        RefundId $id,
+        Money $amount,
+        string $reason,
+        DateTimeImmutable $createdAt,
+    ): self {
+        return new self($id, $amount, $reason, $createdAt);
+    }
+
     public function id(): RefundId
     {
         return $this->id;
