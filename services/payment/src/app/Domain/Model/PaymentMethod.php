@@ -9,8 +9,8 @@ namespace App\Domain\Model;
  */
 enum PaymentMethod: string
 {
-    case Card = 'card';
-    case Sbp = 'sbp';
-    case Wallet = 'wallet';
-    case BankTransfer = 'bank_transfer';
+    case CARD = 'card';
+    case SBP = 'sbp';
+    case WALLET = 'wallet';
+    case BANK_TRANSFER = 'bank_transfer';
 }

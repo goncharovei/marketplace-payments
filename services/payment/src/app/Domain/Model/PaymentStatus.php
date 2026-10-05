@@ -9,35 +9,35 @@ namespace App\Domain\Model;
  */
 enum PaymentStatus: string
 {
-    case Initiated = 'initiated';
-    case Authorized = 'authorized';
-    case Captured = 'captured';
-    case Failed = 'failed';
-    case Refunded = 'refunded';
-    case PartiallyRefunded = 'partially_refunded';
+    case INITIATED = 'initiated';
+    case AUTHORIZED = 'authorized';
+    case CAPTURED = 'captured';
+    case FAILED = 'failed';
+    case REFUNDED = 'refunded';
+    case PARTIALLY_REFUNDED = 'partially_refunded';
 
     public function isFinal(): bool
     {
         return match ($this) {
-            self::Failed, self::Refunded => true,
+            self::FAILED, self::REFUNDED => true,
             default => false,
         };
     }
 
     public function canBeAuthorized(): bool
     {
-        return $this === self::Initiated;
+        return $this === self::INITIATED;
     }
 
     public function canBeCaptured(): bool
     {
-        return $this === self::Authorized;
+        return $this === self::AUTHORIZED;
     }
 
     public function canBeRefunded(): bool
     {
         return match ($this) {
-            self::Captured, self::PartiallyRefunded => true,
+            self::CAPTURED, self::PARTIALLY_REFUNDED => true,
             default => false,
         };
     }
