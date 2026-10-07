@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Messaging;
 
-use App\Application\Saga\OrderFulfillmentSaga;
 use Ecotone\Dbal\Configuration\DbalConfiguration as EcotoneDbalConfiguration;
 use Ecotone\Messaging\Attribute\ServiceContext;
 
@@ -13,7 +12,6 @@ use Ecotone\Messaging\Attribute\ServiceContext;
  *
  * - Transactions for Command Bus and async endpoints.
  * - Document Store for Saga state persistence.
- *
  */
 final class DbalConfiguration
 {

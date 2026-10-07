@@ -19,6 +19,7 @@ interface PaymentRepository
     public function save(Payment $payment): void;
 
     public function findById(PaymentId $id): ?Payment;
+
     public function findByOrderId(OrderId $orderId): ?Payment;
 
     public function nextIdentity(): PaymentId;
