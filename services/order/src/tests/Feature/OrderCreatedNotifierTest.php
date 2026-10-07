@@ -15,7 +15,7 @@ it('publishes order.created to the distributed bus', function (): void {
         ->shouldReceive('convertAndPublishEvent')
         ->once()
         ->withArgs(function (string $routingKey, mixed $event): bool {
-            return $routingKey === config('ecotone.serviceName')
+            return $routingKey === 'payment_service'
                 && $event instanceof OrderCreatedMessage
                 && $event->amount > 0;
         });

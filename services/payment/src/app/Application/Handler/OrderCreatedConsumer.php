@@ -6,17 +6,11 @@ namespace App\Application\Handler;
 
 use App\Application\Command\InitiatePaymentCommand;
 use App\Application\Dto\OrderCreatedMessage;
-use Ecotone\Modelling\Attribute\Distributed;
+use Ecotone\Messaging\Attribute\Asynchronous;
+use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
 
-/**
- * Consumes the order.created message from the Distributed Bus (RabbitMQ)
- * and initiates a new payment for the order.
- *
- * This is the primary integration point between Order Service and
- * Payment Service.
- */
 final readonly class OrderCreatedConsumer
 {
     public function __construct(
@@ -24,7 +18,8 @@ final readonly class OrderCreatedConsumer
         private LoggerInterface $logger,
     ) {}
 
-    #[Distributed]
+    #[Asynchronous('distributed_payment_service')]
+    #[EventHandler(endpointId: 'order_created_consumer')]
     public function handle(OrderCreatedMessage $message): void
     {
         $this->logger->info('Received order.created', [
@@ -39,7 +34,7 @@ final readonly class OrderCreatedConsumer
             buyerId: $message->buyerId,
             amount: $message->amount,
             currency: $message->currency,
-            method: 'card', // Default method; could be extended later.
+            method: 'card',
         ));
 
         $this->logger->info('Payment initiated from order.created', [
