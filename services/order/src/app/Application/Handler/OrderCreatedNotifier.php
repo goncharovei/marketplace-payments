@@ -19,7 +19,7 @@ final readonly class OrderCreatedNotifier
     public function handle(OrderCreated $event): void
     {
         $this->distributedBus->convertAndPublishEvent(
-            routingKey: 'payment_service',
+            routingKey: 'order.created',
             event: new OrderCreatedMessage(
                 orderId: $event->orderId->toString(),
                 buyerId: $event->buyerId->toString(),

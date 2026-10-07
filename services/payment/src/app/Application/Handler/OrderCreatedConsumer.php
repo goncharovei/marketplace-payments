@@ -6,7 +6,7 @@ namespace App\Application\Handler;
 
 use App\Application\Command\InitiatePaymentCommand;
 use App\Application\Dto\OrderCreatedMessage;
-use Ecotone\Messaging\Attribute\Asynchronous;
+use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
@@ -18,8 +18,8 @@ final readonly class OrderCreatedConsumer
         private LoggerInterface $logger,
     ) {}
 
-    #[Asynchronous('distributed_payment_service')]
-    #[EventHandler(endpointId: 'order_created_consumer')]
+    #[Distributed]
+    #[EventHandler('order.created')]
     public function handle(OrderCreatedMessage $message): void
     {
         $this->logger->info('Received order.created', [
