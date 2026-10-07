@@ -15,7 +15,7 @@ it('publishes order.created to the distributed bus', function (): void {
         ->shouldReceive('convertAndPublishEvent')
         ->once()
         ->withArgs(function (string $routingKey, mixed $event): bool {
-            return $routingKey === 'payment_service'
+            return $routingKey === 'order.created'
                 && $event instanceof OrderCreatedMessage
                 && $event->amount > 0;
         });

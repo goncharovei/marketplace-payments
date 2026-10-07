@@ -162,7 +162,7 @@ final class Payment
         $this->status = PaymentStatus::CAPTURED;
         $this->touch();
 
-        $this->recordEvent(PaymentCaptured::now($this->id, $this->amount));
+        $this->recordEvent(PaymentCaptured::now($this->id, $this->orderId, $this->amount));
     }
 
     public function fail(string $reason): void

@@ -84,6 +84,11 @@ it('captures an authorized payment', function (): void {
     $events = $payment->releaseEvents();
     expect($events)->toHaveCount(1)
         ->and($events[0])->toBeInstanceOf(PaymentCaptured::class);
+
+    /** @var PaymentCaptured $capturedEvent */
+    $capturedEvent = $events[0];
+    expect($capturedEvent->orderId->equals($payment->orderId()))->toBeTrue()
+        ->and($capturedEvent->paymentId->equals($payment->id()))->toBeTrue();
 });
 
 it('cannot capture a payment that was not authorized', function (): void {

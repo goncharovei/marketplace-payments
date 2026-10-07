@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine;
 use App\Domain\Event\DomainEventPublisher;
 use App\Domain\Model\Payment;
 use App\Domain\Repository\PaymentRepository;
+use App\Domain\ValueObject\OrderId;
 use App\Domain\ValueObject\PaymentId;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -37,5 +38,12 @@ final readonly class DoctrinePaymentRepository implements PaymentRepository
     public function nextIdentity(): PaymentId
     {
         return PaymentId::generate();
+    }
+
+    public function findByOrderId(OrderId $orderId): ?Payment
+    {
+        return $this->entityManager
+            ->getRepository(Payment::class)
+            ->findOneBy(['orderId' => $orderId]);
     }
 }

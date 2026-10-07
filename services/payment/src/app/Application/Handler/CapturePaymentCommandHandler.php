@@ -23,7 +23,7 @@ final readonly class CapturePaymentCommandHandler
         $payment = $this->payments->findById($paymentId);
 
         if ($payment === null) {
-            throw PaymentNotFoundException::withId($paymentId);
+            throw PaymentNotFoundException::withPaymentId($paymentId);
         }
 
         $payment->capture();
