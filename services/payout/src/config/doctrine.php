@@ -123,7 +123,12 @@ return [
     | Create a custom or override a Doctrine Type
     |--------------------------------------------------------------------------
     */
-    'custom_types'               => [
+    'custom_types' => [
+        'money'               => \App\Infrastructure\Persistence\Doctrine\Types\MoneyType::class,
+        'order_id'            => \App\Infrastructure\Persistence\Doctrine\Types\OrderIdType::class,
+        'payout_id'           => \App\Infrastructure\Persistence\Doctrine\Types\PayoutIdType::class,
+        'seller_id'           => \App\Infrastructure\Persistence\Doctrine\Types\SellerIdType::class,
+        'external_payout_id'  => \App\Infrastructure\Persistence\Doctrine\Types\ExternalPayoutIdType::class,
     ],
     /*
     |--------------------------------------------------------------------------
