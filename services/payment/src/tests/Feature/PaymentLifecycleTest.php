@@ -82,12 +82,15 @@ it('throws when authorizing a non-existent payment', function (): void {
     )))->toThrow(PaymentNotFoundException::class);
 });
 
-it('throws when capturing a payment that was not authorized', function (): void {
+it('captures a payment in initiated state by authorizing on demand', function (): void {
     $commandBus = app(CommandBus::class);
 
     $paymentId = initiatePayment(1000);
 
-    expect(fn () => $commandBus->send(new CapturePaymentCommand(
-        paymentId: $paymentId->toString(),
-    )))->toThrow(DomainException::class);
+    $commandBus->send(new CapturePaymentCommand($paymentId->toString()));
+
+    $payment = $this->em->find(Payment::class, $paymentId);
+
+    expect($payment->status())->toBe(PaymentStatus::CAPTURED)
+        ->and($payment->externalId())->not->toBeNull();
 });

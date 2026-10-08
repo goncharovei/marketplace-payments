@@ -12,6 +12,11 @@ use Mockery\MockInterface;
 it('sends payment.capture command to payment_service on PaymentStarted', function (): void {
     /** @var DistributedBus&MockInterface $distributedBus */
     $distributedBus = Mockery::mock(DistributedBus::class);
+
+    $distributedBus
+        ->shouldReceive('convertAndPublishEvent')
+        ->zeroOrMoreTimes();
+
     $distributedBus
         ->shouldReceive('convertAndSendCommand')
         ->once()

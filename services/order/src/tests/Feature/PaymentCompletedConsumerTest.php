@@ -8,7 +8,6 @@ use App\Application\Dto\PaymentCompletedMessage;
 use App\Application\Handler\PaymentCompletedConsumer;
 use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
-use App\Domain\ValueObject\PaymentId;
 use Ecotone\Modelling\CommandBus;
 
 it('marks an order as paid when payment.completed is received', function (): void {
@@ -23,7 +22,7 @@ it('marks an order as paid when payment.completed is received', function (): voi
     app(CommandBus::class)->send(new StartPaymentCommand($orderId->toString()));
 
     app(PaymentCompletedConsumer::class)->handle(new PaymentCompletedMessage(
-        paymentId: PaymentId::generate()->toString(),
+        paymentId: 'test-payment-id',
         orderId: $orderId->toString(),
         amount: 1000,
         currency: 'RUB',
