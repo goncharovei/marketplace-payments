@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Event\OrderCancelled;
+use App\Domain\Event\OrderCompleted;
 use App\Domain\Event\OrderCreated;
 use App\Domain\Event\OrderPaid;
 use App\Domain\Event\OrderRefunded;
@@ -47,7 +48,7 @@ it('marks order as completed and records OrderCompleted', function (): void {
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)
-        ->and($events[0])->toBeInstanceOf(\App\Domain\Event\OrderCompleted::class);
+        ->and($events[0])->toBeInstanceOf(OrderCompleted::class);
 });
 
 it('cannot mark as completed without prior payment', function (): void {

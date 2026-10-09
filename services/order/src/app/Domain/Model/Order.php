@@ -152,6 +152,7 @@ final class Order
             $this->totalAmount(),
         ));
     }
+
     public function cancel(string $reason): void
     {
         if (! $this->status->canBeCancelled()) {
