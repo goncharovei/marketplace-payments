@@ -124,11 +124,13 @@ return [
     |--------------------------------------------------------------------------
     */
     'custom_types' => [
-        'money'               => \App\Infrastructure\Persistence\Doctrine\Types\MoneyType::class,
-        'order_id'            => \App\Infrastructure\Persistence\Doctrine\Types\OrderIdType::class,
-        'payout_id'           => \App\Infrastructure\Persistence\Doctrine\Types\PayoutIdType::class,
-        'seller_id'           => \App\Infrastructure\Persistence\Doctrine\Types\SellerIdType::class,
-        'external_payout_id'  => \App\Infrastructure\Persistence\Doctrine\Types\ExternalPayoutIdType::class,
+        'money'              => \App\Infrastructure\Persistence\Doctrine\Types\MoneyType::class,
+        'order_id'           => \App\Infrastructure\Persistence\Doctrine\Types\OrderIdType::class,
+        'payout_id'          => \App\Infrastructure\Persistence\Doctrine\Types\PayoutIdType::class,
+        'seller_id'          => \App\Infrastructure\Persistence\Doctrine\Types\SellerIdType::class,
+        'external_payout_id' => \App\Infrastructure\Persistence\Doctrine\Types\ExternalPayoutIdType::class,
+        'payout_status'      => \App\Infrastructure\Persistence\Doctrine\Types\PayoutStatusType::class,
+        'payout_method'      => \App\Infrastructure\Persistence\Doctrine\Types\PayoutMethodType::class,
     ],
     /*
     |--------------------------------------------------------------------------

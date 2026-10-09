@@ -27,7 +27,6 @@ deptrac:
           value: ^App\\Presentation\\.*
 
     # Standard Laravel code (Models, Providers, Http, Console).
-    # Not subject to DDD rules, but must be allowed to depend on Laravel.
     - name: Laravel
       collectors:
         - type: classLike
@@ -39,7 +38,30 @@ deptrac:
         - type: classLike
           value: ^App\\Console\\.*
 
+    # Doctrine mapping attributes (#[ORM\Entity], #[ORM\Column], etc.).
+    - name: DoctrineMapping
+      collectors:
+        - type: classLike
+          value: ^Doctrine\\ORM\\Mapping\\.*
+
+    # Ecotone public API: attributes (#[CommandHandler], #[EventHandler])
+    # and bus interfaces (CommandBus, EventBus, DistributedBus).
+    - name: EcotoneMessaging
+      collectors:
+        - type: classLike
+          value: ^Ecotone\\Modelling\\Attribute\\.*
+        - type: classLike
+          value: ^Ecotone\\Messaging\\Attribute\\.*
+        - type: classLike
+          value: ^Ecotone\\Modelling\\CommandBus$
+        - type: classLike
+          value: ^Ecotone\\Modelling\\EventBus$
+        - type: classLike
+          value: ^Ecotone\\Modelling\\DistributedBus$
+
     # Framework and third-party libraries.
+    # Explicitly exclude Doctrine mapping and Ecotone attribute namespaces
+    # so they belong only to their dedicated layers above.
     - name: Framework
       collectors:
         - type: classLike
@@ -47,44 +69,58 @@ deptrac:
         - type: classLike
           value: ^Laravel\\.*
         - type: classLike
-          value: ^Doctrine\\.*
+          value: ^Doctrine\\(?!ORM\\Mapping).*
         - type: classLike
-          value: ^Ecotone\\.*
+          value: ^Ecotone\\(?!Modelling\\Attribute|Messaging\\Attribute|Modelling\\CommandBus|Modelling\\EventBus|Modelling\\DistributedBus).*
         - type: classLike
           value: ^Symfony\\.*
+
+    - name: Psr
+      collectors:
         - type: classLike
           value: ^Psr\\.*
 
   ruleset:
     Domain:
-      # Domain depends only on itself. No framework, no infrastructure.
       - Domain
+      - DoctrineMapping
 
     Application:
-      # Application depends only on Domain.
+      # Application handlers use Ecotone attributes for registration.
       - Domain
       - Application
+      - EcotoneMessaging
+      - Psr
 
     Infrastructure:
-      # Infrastructure implements interfaces from Domain/Application.
       - Domain
       - Application
       - Infrastructure
       - Framework
+      - DoctrineMapping
+      - EcotoneMessaging
 
     Presentation:
-      # Presentation calls use cases from Application.
       - Domain
       - Application
       - Infrastructure
       - Presentation
       - Laravel
       - Framework
+      - DoctrineMapping
+      - EcotoneMessaging
 
     Laravel:
-      # Standard Laravel code can depend on anything.
       - Domain
       - Application
       - Infrastructure
       - Laravel
       - Framework
+      - DoctrineMapping
+      - EcotoneMessaging
+
+    DoctrineMapping:
+      - DoctrineMapping
+
+    EcotoneMessaging:
+      - EcotoneMessaging
