@@ -6,6 +6,7 @@ namespace App\Domain\Model;
 
 use App\Domain\Event\DomainEvent;
 use App\Domain\Event\OrderCancelled;
+use App\Domain\Event\OrderCompleted;
 use App\Domain\Event\OrderCreated;
 use App\Domain\Event\OrderPaid;
 use App\Domain\Event\OrderRefunded;
@@ -133,6 +134,24 @@ final class Order
         $this->recordEvent(OrderPaid::now($this->id, $this->totalAmount()));
     }
 
+    public function markAsCompleted(): void
+    {
+        if (! $this->status->canBeCompleted()) {
+            throw new DomainException(sprintf(
+                'Cannot complete order in status "%s".',
+                $this->status->value,
+            ));
+        }
+
+        $this->status = OrderStatus::Completed;
+        $this->touch();
+
+        $this->recordEvent(OrderCompleted::now(
+            $this->id,
+            $this->sellerId,
+            $this->totalAmount(),
+        ));
+    }
     public function cancel(string $reason): void
     {
         if (! $this->status->canBeCancelled()) {

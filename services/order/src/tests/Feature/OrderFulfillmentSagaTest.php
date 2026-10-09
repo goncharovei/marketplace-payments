@@ -10,7 +10,7 @@ use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
 use Ecotone\Modelling\CommandBus;
 
-it('runs saga through happy path: created → paid', function (): void {
+it('runs saga through happy path: created → completed', function (): void {
     $commandBus = app(CommandBus::class);
 
     $orderId = $commandBus->send(new PlaceOrderCommand(
@@ -26,7 +26,7 @@ it('runs saga through happy path: created → paid', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::Completed);
 });
 
 it('cancels saga when order is cancelled', function (): void {

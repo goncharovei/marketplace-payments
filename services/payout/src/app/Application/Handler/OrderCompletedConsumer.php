@@ -6,8 +6,8 @@ namespace App\Application\Handler;
 
 use App\Application\Command\CreatePayoutCommand;
 use App\Application\Dto\OrderCompletedMessage;
-use Ecotone\Modelling\Attribute\CommandHandler;
 use Ecotone\Modelling\Attribute\Distributed;
+use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
 
@@ -19,7 +19,7 @@ final readonly class OrderCompletedConsumer
     ) {}
 
     #[Distributed]
-    #[CommandHandler('order.completed')]
+    #[EventHandler('order.completed')]
     public function handle(OrderCompletedMessage $message): void
     {
         $this->logger->info('Received order.completed', [

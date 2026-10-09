@@ -58,7 +58,7 @@ it('returns 404 for non-existent order', function (): void {
     $response->assertStatus(404);
 });
 
-it('runs full lifecycle via API: create → pay → paid', function (): void {
+it('runs full lifecycle via API: create → pay → completed', function (): void {
     $createResponse = $this->postJson('/api/v1/orders', [
         'buyerId' => 'buyer-1',
         'sellerId' => 'seller-1',
@@ -72,7 +72,7 @@ it('runs full lifecycle via API: create → pay → paid', function (): void {
     $this->postJson("/api/v1/orders/{$orderId}/paid")->assertStatus(200);
 
     $showResponse = $this->getJson("/api/v1/orders/{$orderId}");
-    $showResponse->assertJson(['status' => 'paid']);
+    $showResponse->assertJson(['status' => 'completed']);
 });
 
 it('cancels an order via API', function (): void {

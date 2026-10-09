@@ -35,6 +35,27 @@ function placeTestOrder(): Order
     );
 }
 
+it('marks order as completed and records OrderCompleted', function (): void {
+    $order = placeTestOrder();
+    $order->startPayment();
+    $order->markAsPaid();
+    $order->releaseEvents();
+
+    $order->markAsCompleted();
+
+    expect($order->status())->toBe(OrderStatus::Completed);
+
+    $events = $order->releaseEvents();
+    expect($events)->toHaveCount(1)
+        ->and($events[0])->toBeInstanceOf(\App\Domain\Event\OrderCompleted::class);
+});
+
+it('cannot mark as completed without prior payment', function (): void {
+    $order = placeTestOrder();
+
+    expect(fn () => $order->markAsCompleted())->toThrow(DomainException::class);
+});
+
 it('places an order and records OrderCreated', function (): void {
     $order = placeTestOrder();
 

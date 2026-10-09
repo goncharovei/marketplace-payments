@@ -12,13 +12,14 @@ enum OrderStatus: string
     case Created = 'created';
     case PaymentProcessing = 'payment_processing';
     case Paid = 'paid';
+    case Completed = 'completed';
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
 
     public function isFinal(): bool
     {
         return match ($this) {
-            self::Cancelled, self::Refunded => true,
+            self::Completed, self::Cancelled, self::Refunded => true,
             default => false,
         };
     }
@@ -26,6 +27,11 @@ enum OrderStatus: string
     public function canBePaid(): bool
     {
         return $this === self::Created;
+    }
+
+    public function canBeCompleted(): bool
+    {
+        return $this === self::Paid;
     }
 
     public function canBeCancelled(): bool

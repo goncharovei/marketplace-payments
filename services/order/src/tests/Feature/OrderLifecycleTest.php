@@ -23,7 +23,7 @@ function placeOrderForLifecycle(): OrderId
     ));
 }
 
-it('runs full order lifecycle: created → paid', function (): void {
+it('runs full order lifecycle: created → completed', function (): void {
     $commandBus = app(CommandBus::class);
 
     $orderId = placeOrderForLifecycle();
@@ -33,7 +33,7 @@ it('runs full order lifecycle: created → paid', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::Completed);
 });
 
 it('cancels an unpaid order', function (): void {
@@ -45,6 +45,19 @@ it('cancels an unpaid order', function (): void {
     $order = $this->em->find(Order::class, $orderId);
 
     expect($order->status())->toBe(OrderStatus::Cancelled);
+});
+
+it('cannot cancel a completed order', function (): void {
+    $commandBus = app(CommandBus::class);
+
+    $orderId = placeOrderForLifecycle();
+    $commandBus->send(new StartPaymentCommand($orderId->toString()));
+    $commandBus->send(new MarkOrderPaidCommand($orderId->toString()));
+
+    expect(fn () => $commandBus->send(new CancelOrderCommand(
+        $orderId->toString(),
+        'Too late',
+    )))->toThrow(DomainException::class);
 });
 
 it('refunds a paid order when cancelled', function (): void {
