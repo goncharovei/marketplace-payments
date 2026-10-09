@@ -78,6 +78,7 @@ it('fails the payout when the gateway rejects the transfer', function (): void {
 
     $balance = $this->em->find(SellerBalance::class, SellerId::fromString('seller-3'));
 
-    expect($balance->available()->amount())->toBe(1000)
+    // Net amount (1000 - 10% fee) was earned, reserved and then released back.
+    expect($balance->available()->amount())->toBe(900)
         ->and($balance->reserved()->amount())->toBe(0);
 });

@@ -55,7 +55,7 @@ final readonly class CreatePayoutCommandHandler
         $balance = $this->balances->findBySellerId($sellerId)
             ?? SellerBalance::start($sellerId, $command->currency);
 
-        $balance->earn($orderAmount);
+        $balance->earn($payout->amount());
         $balance->reserve($payout->amount());
         $this->balances->save($balance);
 
