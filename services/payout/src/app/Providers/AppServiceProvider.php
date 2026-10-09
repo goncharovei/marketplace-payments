@@ -34,7 +34,9 @@ class AppServiceProvider extends ServiceProvider
             DomainEventPublisher::class,
             EcotoneDomainEventPublisher::class,
         );
-        $this->app->singleton(PayoutGateway::class, FakePayoutGateway::class);
+
+        $this->app->singleton(FakePayoutGateway::class);
+        $this->app->alias(FakePayoutGateway::class, PayoutGateway::class);
 
         $this->app->singleton(AmqpConnectionFactory::class, function (): AmqpConnectionFactory {
             return new AmqpConnectionFactory(config('amqp.dsn'));
