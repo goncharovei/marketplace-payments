@@ -13,8 +13,11 @@ use Mockery\MockInterface;
 it('publishes order.completed after the order transitions to Completed', function (): void {
     /** @var DistributedBus&MockInterface $distributedBus */
     $distributedBus = Mockery::mock(DistributedBus::class);
-    $distributedBus->shouldReceive('convertAndPublishEvent')->zeroOrMoreTimes();
 
+    // PaymentStarted notifier sends a distributed command — allow it.
+    $distributedBus->shouldReceive('convertAndSendCommand')->zeroOrMoreTimes();
+
+    // Narrow rule FIRST: order.completed must be published exactly once.
     $distributedBus
         ->shouldReceive('convertAndPublishEvent')
         ->once()
@@ -23,6 +26,13 @@ it('publishes order.completed after the order transitions to Completed', functio
                 && $event instanceof OrderCompletedMessage
                 && $event->sellerId === 'seller-completed';
         });
+
+    // Catch-all rule for other events (order.created, etc.).
+    // Placed AFTER the narrow rule so Mockery matches the specific one first.
+    $distributedBus
+        ->shouldReceive('convertAndPublishEvent')
+        ->withArgs(fn (string $routingKey): bool => $routingKey !== 'order.completed')
+        ->zeroOrMoreTimes();
 
     $this->app->instance(DistributedBus::class, $distributedBus);
 

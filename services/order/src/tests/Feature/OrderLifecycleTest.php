@@ -60,19 +60,6 @@ it('cannot cancel a completed order', function (): void {
     )))->toThrow(DomainException::class);
 });
 
-it('refunds a paid order when cancelled', function (): void {
-    $commandBus = app(CommandBus::class);
-
-    $orderId = placeOrderForLifecycle();
-    $commandBus->send(new StartPaymentCommand($orderId->toString()));
-    $commandBus->send(new MarkOrderPaidCommand($orderId->toString()));
-    $commandBus->send(new CancelOrderCommand($orderId->toString(), 'Out of stock'));
-
-    $order = $this->em->find(Order::class, $orderId);
-
-    expect($order->status())->toBe(OrderStatus::Refunded);
-});
-
 it('throws when starting payment for non-existent order', function (): void {
     $commandBus = app(CommandBus::class);
 

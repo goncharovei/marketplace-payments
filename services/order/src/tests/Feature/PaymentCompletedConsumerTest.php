@@ -10,7 +10,7 @@ use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
 use Ecotone\Modelling\CommandBus;
 
-it('marks an order as paid when payment.completed is received', function (): void {
+it('marks an order as completed when payment.completed is received', function (): void {
     $orderId = app(CommandBus::class)->send(new PlaceOrderCommand(
         buyerId: 'buyer-paid',
         sellerId: 'seller-paid',
@@ -30,5 +30,8 @@ it('marks an order as paid when payment.completed is received', function (): voi
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    // MarkOrderPaidCommandHandler auto-completes the order for the demo
+    // (delivery is instantaneous). In production, a delivery step would
+    // sit between Paid and Completed.
+    expect($order->status())->toBe(OrderStatus::Completed);
 });
