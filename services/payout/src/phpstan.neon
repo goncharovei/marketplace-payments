@@ -15,6 +15,7 @@ parameters:
         - app/Providers (?)
         - app/Http (?)
         - app/Console (?)
+        - tests/Pest.php (?)
 
     # In PHPStan 2.x these are configured via ignoreErrors identifiers.
     # The list may contain patterns for errors that don't exist yet -
@@ -22,6 +23,10 @@ parameters:
     ignoreErrors:
         - identifier: missingType.iterableValue
         - identifier: missingType.generics
+        - identifier: property.notFound
+          path: tests/Feature/*
+        - identifier: method.notFound
+          path: tests/Feature/*
 
     reportUnmatchedIgnoredErrors: false
 

@@ -9,36 +9,19 @@ return [
     | Entity Manager Migrations Configuration
     |--------------------------------------------------------------------------
     |
-    | Each entity manager can have a custom migration configuration. Provide
-    | the name of the entity manager as the key, then duplicate the settings.
-    | This will allow generating custom migrations per EM instance and not have
-    | collisions when executing them.
+    | Each entity manager has its own migration configuration.
+    | Laravel migrations live in `database/migrations` and use the standard
+    | `php artisan migrate` command. Doctrine migrations live separately in
+    | `database/doctrine-migrations` and use `php artisan doctrine:migrations:*`.
     |
     */
     'default' => [
         'table_storage' => [
-            /*
-            |--------------------------------------------------------------------------
-            | Migration Repository Table
-            |--------------------------------------------------------------------------
-            |
-            | This table keeps track of all the migrations that have already run for
-            | your application. Using this information, we can determine which of
-            | the migrations on disk haven't actually been run in the database.
-            |
-            */
-            'table_name'     => 'migrations',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Schema filter
-            |--------------------------------------------------------------------------
-            |
-            | Tables which are filtered by Regular Expression. You optionally
-            | exclude or limit to certain tables. The default will
-            | filter all tables.
-            |
-            */
+            'table_name' => 'doctrine_migration_versions',
+            'version_column_name' => 'version',
+            'version_column_length' => 255,
+            'executed_at_column_name' => 'executed_at',
+            'execution_time_column_name' => 'execution_time',
             'schema_filter' => '/^(orders|payments|payouts|seller_balances|outbox|saga_states)$/',
         ],
 
@@ -46,22 +29,9 @@ return [
             'Database\\DoctrineMigrations' => database_path('doctrine-migrations'),
         ],
 
-        /*
-        |--------------------------------------------------------------------------
-        | Migration Organize Directory
-        |--------------------------------------------------------------------------
-        |
-        | Organize migrations file by directory.
-        | Possible values: "year", "year_and_month" and "none"
-        |
-        | none:
-        |    directory/
-        | "year":
-        |    directory/2020/
-        | "year_and_month":
-        |    directory/2020/01/
-        |
-        */
         'organize_migrations' => 'none',
+        'all_or_nothing' => false,
+        'transactional' => true,
+        'check_database_platform' => true,
     ],
 ];

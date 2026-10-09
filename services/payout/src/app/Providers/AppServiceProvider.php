@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Domain\Event\DomainEventPublisher;
+use App\Domain\Repository\PayoutRepository;
+use App\Domain\Repository\SellerBalanceRepository;
 use App\Infrastructure\Messaging\EcotoneDomainEventPublisher;
+use App\Infrastructure\Persistence\Doctrine\DoctrinePayoutRepository;
+use App\Infrastructure\Persistence\Doctrine\DoctrineSellerBalanceRepository;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +18,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(
+            PayoutRepository::class,
+            DoctrinePayoutRepository::class,
+        );
+
+        $this->app->singleton(
+            SellerBalanceRepository::class,
+            DoctrineSellerBalanceRepository::class,
+        );
+
         $this->app->singleton(
             DomainEventPublisher::class,
             EcotoneDomainEventPublisher::class,
