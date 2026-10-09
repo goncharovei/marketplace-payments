@@ -171,6 +171,8 @@ final class Payout
 
         $this->recordEvent(PayoutCompleted::now(
             $this->id,
+            $this->orderId,
+            $this->sellerId,
             $externalId,
             $this->amount,
         ));
@@ -188,7 +190,7 @@ final class Payout
         $this->status = PayoutStatus::FAILED;
         $this->touch();
 
-        $this->recordEvent(PayoutFailed::now($this->id, $reason));
+        $this->recordEvent(PayoutFailed::now($this->id, $this->orderId, $this->sellerId, $reason));
     }
 
     public function retry(): void

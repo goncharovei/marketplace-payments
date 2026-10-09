@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Domain\Event\DomainEventPublisher;
 use App\Domain\Repository\PayoutRepository;
 use App\Domain\Repository\SellerBalanceRepository;
+use App\Domain\Service\PayoutGateway;
 use App\Infrastructure\Messaging\EcotoneDomainEventPublisher;
 use App\Infrastructure\Persistence\Doctrine\DoctrinePayoutRepository;
 use App\Infrastructure\Persistence\Doctrine\DoctrineSellerBalanceRepository;
+use App\Infrastructure\Service\FakePayoutGateway;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
             DomainEventPublisher::class,
             EcotoneDomainEventPublisher::class,
         );
+        $this->app->singleton(PayoutGateway::class, FakePayoutGateway::class);
 
         $this->app->singleton(AmqpConnectionFactory::class, function (): AmqpConnectionFactory {
             return new AmqpConnectionFactory(config('amqp.dsn'));
