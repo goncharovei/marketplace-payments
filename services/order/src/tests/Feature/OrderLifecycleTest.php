@@ -23,7 +23,7 @@ function placeOrderForLifecycle(): OrderId
     ));
 }
 
-it('runs full order lifecycle: created → completed', function (): void {
+it('runs full order lifecycle up to Paid (Saga drives the rest)', function (): void {
     $commandBus = app(CommandBus::class);
 
     $orderId = placeOrderForLifecycle();
@@ -33,7 +33,7 @@ it('runs full order lifecycle: created → completed', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Completed);
+    expect($order->status())->toBe(OrderStatus::Paid);
 });
 
 it('cancels an unpaid order', function (): void {
@@ -47,17 +47,17 @@ it('cancels an unpaid order', function (): void {
     expect($order->status())->toBe(OrderStatus::Cancelled);
 });
 
-it('cannot cancel a completed order', function (): void {
+it('refunds a paid order when cancelled', function (): void {
     $commandBus = app(CommandBus::class);
 
     $orderId = placeOrderForLifecycle();
     $commandBus->send(new StartPaymentCommand($orderId->toString()));
     $commandBus->send(new MarkOrderPaidCommand($orderId->toString()));
+    $commandBus->send(new CancelOrderCommand($orderId->toString(), 'Out of stock'));
 
-    expect(fn () => $commandBus->send(new CancelOrderCommand(
-        $orderId->toString(),
-        'Too late',
-    )))->toThrow(DomainException::class);
+    $order = $this->em->find(Order::class, $orderId);
+
+    expect($order->status())->toBe(OrderStatus::Refunded);
 });
 
 it('throws when starting payment for non-existent order', function (): void {

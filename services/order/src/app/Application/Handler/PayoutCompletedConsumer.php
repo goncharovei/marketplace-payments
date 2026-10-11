@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Handler;
 
+use App\Application\Command\MarkOrderCompletedCommand;
 use App\Application\Dto\PayoutCompletedMessage;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
+use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
 
 final readonly class PayoutCompletedConsumer
 {
     public function __construct(
+        private CommandBus $commandBus,
         private LoggerInterface $logger,
     ) {}
 
@@ -24,7 +27,10 @@ final readonly class PayoutCompletedConsumer
             'payoutId' => $message->payoutId,
             'sellerId' => $message->sellerId,
             'amount' => $message->amount,
-            'currency' => $message->currency,
         ]);
+
+        $this->commandBus->send(new MarkOrderCompletedCommand(
+            orderId: $message->orderId,
+        ));
     }
 }

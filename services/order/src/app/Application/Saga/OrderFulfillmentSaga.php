@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Saga;
 
+use App\Application\Dto\CreatePayoutMessage;
+use App\Application\Dto\PayoutFailedSignal;
 use App\Domain\Event\OrderCancelled;
+use App\Domain\Event\OrderCompleted;
 use App\Domain\Event\OrderCreated;
 use App\Domain\Event\OrderPaid;
 use App\Domain\Event\OrderRefunded;
@@ -13,12 +16,16 @@ use App\Domain\Saga\OrderFulfillmentState;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\Attribute\Identifier;
 use Ecotone\Modelling\Attribute\Saga;
+use Ecotone\Modelling\DistributedBus;
 
 /**
  * Orchestration Saga for the order fulfillment process.
  *
- * State is stored as a plain string (not an enum) because the
- * Document Store serializes Saga state via PHP serialization.
+ * The Saga is the only component that knows the whole business process.
+ * It reacts to domain events and drives the flow forward by sending
+ * commands to other services via the DistributedBus.
+ *
+ * State is stored as a plain string (Ecotone serializes Saga state).
  */
 #[Saga]
 final class OrderFulfillmentSaga
@@ -29,7 +36,7 @@ final class OrderFulfillmentSaga
     private string $state = 'started';
 
     /**
-     * Factory method: called only when no Saga exists for the given orderId.
+     * Factory: called only when no Saga exists for the given orderId.
      */
     #[EventHandler]
     public static function startWhen(OrderCreated $event): self
@@ -47,10 +54,46 @@ final class OrderFulfillmentSaga
         $this->state = OrderFulfillmentState::AWAITING_PAYMENT->value;
     }
 
+    /**
+     * After the order is Paid, the Saga sends a command to the Payout
+     * Service asking it to pay the seller. This is where orchestration
+     * replaces the previous event-driven choreography.
+     */
     #[EventHandler]
-    public function whenOrderPaid(OrderPaid $event): void
+    public function whenOrderPaid(OrderPaid $event, DistributedBus $distributedBus): void
+    {
+        $this->state = OrderFulfillmentState::PAID->value;
+
+        $distributedBus->convertAndSendCommand(
+            targetServiceName: 'payout_service',
+            routingKey: 'payout.create',
+            command: new CreatePayoutMessage(
+                orderId: $event->orderId->toString(),
+                sellerId: $event->sellerId->toString(),
+                amount: $event->amount->amount(),
+                currency: $event->amount->currency(),
+            ),
+        );
+    }
+
+    /**
+     * Reached only after Payout Service confirms the transfer.
+     */
+    #[EventHandler]
+    public function whenOrderCompleted(OrderCompleted $event): void
     {
         $this->state = OrderFulfillmentState::COMPLETED->value;
+    }
+
+    /**
+     * Compensation path: the payment was captured, but the payout failed.
+     * The order stays in Paid — money is not returned to the buyer.
+     * Manual review is required.
+     */
+    #[EventHandler]
+    public function whenPayoutFailed(PayoutFailedSignal $signal): void
+    {
+        $this->state = OrderFulfillmentState::PAYOUT_FAILED->value;
     }
 
     #[EventHandler]

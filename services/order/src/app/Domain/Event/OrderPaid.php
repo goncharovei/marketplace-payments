@@ -6,19 +6,24 @@ namespace App\Domain\Event;
 
 use App\Domain\ValueObject\Money;
 use App\Domain\ValueObject\OrderId;
+use App\Domain\ValueObject\SellerId;
 use DateTimeImmutable;
 
 final readonly class OrderPaid implements DomainEvent
 {
     public function __construct(
         public OrderId $orderId,
+        public SellerId $sellerId,
         public Money $amount,
         private DateTimeImmutable $occurredAt,
     ) {}
 
-    public static function now(OrderId $orderId, Money $amount): self
-    {
-        return new self($orderId, $amount, new DateTimeImmutable);
+    public static function now(
+        OrderId $orderId,
+        SellerId $sellerId,
+        Money $amount,
+    ): self {
+        return new self($orderId, $sellerId, $amount, new DateTimeImmutable);
     }
 
     public function occurredAt(): DateTimeImmutable

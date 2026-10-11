@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Command\MarkOrderCompletedCommand;
 use App\Application\Command\MarkOrderPaidCommand;
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
@@ -14,7 +15,6 @@ it('publishes order.completed after the order transitions to Completed', functio
     /** @var DistributedBus&MockInterface $distributedBus */
     $distributedBus = Mockery::mock(DistributedBus::class);
 
-    // PaymentStarted notifier sends a distributed command — allow it.
     $distributedBus->shouldReceive('convertAndSendCommand')->zeroOrMoreTimes();
 
     // Narrow rule FIRST: order.completed must be published exactly once.
@@ -27,8 +27,6 @@ it('publishes order.completed after the order transitions to Completed', functio
                 && $event->sellerId === 'seller-completed';
         });
 
-    // Catch-all rule for other events (order.created, etc.).
-    // Placed AFTER the narrow rule so Mockery matches the specific one first.
     $distributedBus
         ->shouldReceive('convertAndPublishEvent')
         ->withArgs(fn (string $routingKey): bool => $routingKey !== 'order.completed')
@@ -48,4 +46,5 @@ it('publishes order.completed after the order transitions to Completed', functio
 
     $commandBus->send(new StartPaymentCommand($orderId->toString()));
     $commandBus->send(new MarkOrderPaidCommand($orderId->toString()));
+    $commandBus->send(new MarkOrderCompletedCommand($orderId->toString()));
 });

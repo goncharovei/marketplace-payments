@@ -131,7 +131,11 @@ final class Order
         $this->status = OrderStatus::Paid;
         $this->touch();
 
-        $this->recordEvent(OrderPaid::now($this->id, $this->totalAmount()));
+        $this->recordEvent(OrderPaid::now(
+            $this->id,
+            $this->sellerId,
+            $this->totalAmount(),
+        ));
     }
 
     public function markAsCompleted(): void

@@ -27,11 +27,6 @@ final readonly class MarkOrderPaidCommandHandler
         }
 
         $order->markAsPaid();
-
-        // For the demo, delivery is instantaneous:
-        // the order is marked as completed right after payment.
-        $order->markAsCompleted();
-
         $this->orders->save($order);
     }
 }

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\CreatePayoutCommand;
-use App\Application\Dto\OrderCompletedMessage;
+use App\Application\Dto\CreatePayoutMessage;
+use Ecotone\Modelling\Attribute\CommandHandler;
 use Ecotone\Modelling\Attribute\Distributed;
-use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
 
-final readonly class OrderCompletedConsumer
+final readonly class CreatePayoutConsumer
 {
     public function __construct(
         private CommandBus $commandBus,
@@ -19,10 +19,10 @@ final readonly class OrderCompletedConsumer
     ) {}
 
     #[Distributed]
-    #[EventHandler('order.completed')]
-    public function handle(OrderCompletedMessage $message): void
+    #[CommandHandler('payout.create')]
+    public function handle(CreatePayoutMessage $message): void
     {
-        $this->logger->info('Received order.completed', [
+        $this->logger->info('Received payout.create', [
             'orderId' => $message->orderId,
             'sellerId' => $message->sellerId,
             'amount' => $message->amount,
