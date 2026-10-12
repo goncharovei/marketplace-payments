@@ -33,8 +33,6 @@ jobs:
       matrix:
         service: [order, payment, payout]
         php: ['8.3']
-        # Add '8.2' to the list above to run a second matrix dimension.
-        # See the notes at the bottom of this file before enabling.
 
     services:
       postgres:
@@ -67,6 +65,19 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Prepare .env for CI
+        run: |
+          cp .env.example .env
+          sed -i "s|^DB_HOST=.*|DB_HOST=127.0.0.1|" .env
+          sed -i "s|^DB_PORT=.*|DB_PORT=5432|" .env
+          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=test_db|" .env
+          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=test_user|" .env
+          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=test_pass|" .env
+          sed -i "s|^RABBITMQ_HOST=.*|RABBITMQ_HOST=127.0.0.1|" .env
+          sed -i "s|^RABBITMQ_USER=.*|RABBITMQ_USER=guest|" .env
+          sed -i "s|^RABBITMQ_PASSWORD=.*|RABBITMQ_PASSWORD=guest|" .env
+          sed -i "s|^ECOTONE_SERVICE_NAME=.*|ECOTONE_SERVICE_NAME=${{ matrix.service }}_service|" .env
+
       - name: Resolve composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
@@ -81,18 +92,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
-
-      - name: Prepare .env for CI
-        run: |
-          cp .env.example .env
-          sed -i "s|^DB_HOST=.*|DB_HOST=127.0.0.1|" .env
-          sed -i "s|^DB_PORT=.*|DB_PORT=5432|" .env
-          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=test_db|" .env
-          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=test_user|" .env
-          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=test_pass|" .env
-          sed -i "s|^RABBITMQ_HOST=.*|RABBITMQ_HOST=127.0.0.1|" .env
-          sed -i "s|^RABBITMQ_USER=.*|RABBITMQ_USER=guest|" .env
-          sed -i "s|^RABBITMQ_PASSWORD=.*|RABBITMQ_PASSWORD=guest|" .env
 
       - name: Generate application key
         run: php artisan key:generate
