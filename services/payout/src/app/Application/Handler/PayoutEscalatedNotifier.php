@@ -5,18 +5,24 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Dto\PayoutFailedMessage;
-use App\Domain\Event\PayoutFailed;
+use App\Domain\Event\PayoutEscalated;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\DistributedBus;
 
-final readonly class PayoutFailedNotifier
+/**
+ * Publishes payout.failed to the Order Service only when the payout has
+ * been permanently escalated (retries exhausted).
+ *
+ * Transient retries remain internal to the Payout Service.
+ */
+final readonly class PayoutEscalatedNotifier
 {
     public function __construct(
         private DistributedBus $distributedBus,
     ) {}
 
     #[EventHandler]
-    public function handle(PayoutFailed $event): void
+    public function handle(PayoutEscalated $event): void
     {
         $this->distributedBus->convertAndPublishEvent(
             routingKey: 'payout.failed',

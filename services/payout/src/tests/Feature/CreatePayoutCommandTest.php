@@ -30,13 +30,15 @@ it('creates a payout, reserves balance, and completes it', function (): void {
         ->and($payout->status())->toBe(PayoutStatus::COMPLETED)
         ->and($payout->amount()->amount())->toBe(2250)
         ->and($payout->platformFee()->amount())->toBe(250)
+        ->and($payout->retryCount())->toBe(0)
         ->and($payout->externalId())->not->toBeNull();
 
     $balance = $this->em->find(SellerBalance::class, SellerId::fromString('seller-1'));
 
     expect($balance)->not->toBeNull()
         ->and($balance->available()->amount())->toBe(0)
-        ->and($balance->reserved()->amount())->toBe(0);
+        ->and($balance->reserved()->amount())->toBe(0)
+        ->and($balance->debt()->amount())->toBe(0);
 });
 
 it('is idempotent when called twice for the same order', function (): void {
@@ -59,26 +61,56 @@ it('is idempotent when called twice for the same order', function (): void {
     expect($first->equals($second))->toBeTrue();
 });
 
-it('fails the payout when the gateway rejects the transfer', function (): void {
-    $gateway = app(FakePayoutGateway::class);
-    $gateway->failNext('Insufficient seller data');
+it('retries a transient gateway failure and completes on the next attempt', function (): void {
+    app(FakePayoutGateway::class)->failNext('Transient network error');
 
     $orderId = OrderId::generate()->toString();
 
     $payoutId = app(CommandBus::class)->send(new CreatePayoutCommand(
         orderId: $orderId,
-        sellerId: 'seller-3',
+        sellerId: 'seller-retry',
         amount: 1000,
         currency: 'RUB',
     ));
 
     $payout = $this->em->find(Payout::class, $payoutId);
 
-    expect($payout->status())->toBe(PayoutStatus::FAILED);
+    expect($payout->status())->toBe(PayoutStatus::COMPLETED)
+        ->and($payout->retryCount())->toBe(1);
 
-    $balance = $this->em->find(SellerBalance::class, SellerId::fromString('seller-3'));
+    $balance = $this->em->find(SellerBalance::class, SellerId::fromString('seller-retry'));
 
-    // Net amount (1000 - 10% fee) was earned, reserved and then released back.
-    expect($balance->available()->amount())->toBe(900)
-        ->and($balance->reserved()->amount())->toBe(0);
+    expect($balance->available()->amount())->toBe(0)
+        ->and($balance->reserved()->amount())->toBe(0)
+        ->and($balance->debt()->amount())->toBe(0);
+});
+
+it('escalates to ON_HOLD after exhausting all retries and increases debt', function (): void {
+    // 1 initial attempt + MAX_RETRY_COUNT retries = 6 total failures.
+    app(FakePayoutGateway::class)->failFor(
+        attempts: Payout::MAX_RETRY_COUNT + 1,
+        reason: 'Persistent bank outage',
+    );
+
+    $orderId = OrderId::generate()->toString();
+
+    $payoutId = app(CommandBus::class)->send(new CreatePayoutCommand(
+        orderId: $orderId,
+        sellerId: 'seller-escalated',
+        amount: 1000,
+        currency: 'RUB',
+    ));
+
+    $payout = $this->em->find(Payout::class, $payoutId);
+
+    expect($payout->status())->toBe(PayoutStatus::ON_HOLD)
+        ->and($payout->retryCount())->toBe(Payout::MAX_RETRY_COUNT);
+
+    $balance = $this->em->find(SellerBalance::class, SellerId::fromString('seller-escalated'));
+
+    // Reserved money moved to debt — the platform has already captured
+    // the buyer's payment, the seller still owes the unfulfilled payout.
+    expect($balance->available()->amount())->toBe(0)
+        ->and($balance->reserved()->amount())->toBe(0)
+        ->and($balance->debt()->amount())->toBe(900);
 });

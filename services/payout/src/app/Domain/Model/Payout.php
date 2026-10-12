@@ -233,7 +233,12 @@ final class Payout
         $this->status = PayoutStatus::ON_HOLD;
         $this->touch();
 
-        $this->recordEvent(PayoutEscalated::now($this->id, $reason));
+        $this->recordEvent(PayoutEscalated::now(
+            $this->id,
+            $this->orderId,
+            $this->sellerId,
+            $reason,
+        ));
     }
 
     public function id(): PayoutId

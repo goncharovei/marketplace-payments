@@ -12,26 +12,38 @@ use App\Domain\ValueObject\Money;
 
 /**
  * Emulates an external payout provider.
- * Always succeeds unless `failNext()` is called.
+ *
+ * By default every call succeeds. Use failNext() for a single-shot
+ * failure or failFor() for N consecutive failures (useful to exhaust
+ * the retry policy in tests).
  */
 final class FakePayoutGateway implements PayoutGateway
 {
-    private bool $shouldFail = false;
+    private int $remainingFailures = 0;
 
     private ?string $failReason = null;
 
     public function failNext(string $reason = 'Bank rejected the transfer'): void
     {
-        $this->shouldFail = true;
+        $this->remainingFailures = 1;
+        $this->failReason = $reason;
+    }
+
+    public function failFor(int $attempts, string $reason = 'Bank rejected the transfer'): void
+    {
+        $this->remainingFailures = $attempts;
         $this->failReason = $reason;
     }
 
     public function send(Money $amount, PayoutMethod $method): ExternalPayoutId
     {
-        if ($this->shouldFail) {
-            $this->shouldFail = false;
+        if ($this->remainingFailures > 0) {
+            $this->remainingFailures--;
             $reason = $this->failReason ?? 'Unknown error';
-            $this->failReason = null;
+
+            if ($this->remainingFailures === 0) {
+                $this->failReason = null;
+            }
 
             throw new PayoutGatewayException($reason);
         }

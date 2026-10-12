@@ -51,36 +51,72 @@ final readonly class CreatePayoutCommandHandler
             PayoutMethod::BANK_TRANSFER,
         );
 
-        // Reserve the payout amount from the seller's balance.
         $balance = $this->balances->findBySellerId($sellerId)
             ?? SellerBalance::start($sellerId, $command->currency);
 
         $balance->earn($payout->amount());
         $balance->reserve($payout->amount());
-        $this->balances->save($balance);
-
-        // Persist the payout in PENDING, then try to send it.
-        $this->payouts->save($payout);
 
         $payout->start();
 
-        try {
-            $externalId = $this->gateway->send($payout->amount(), $payout->method());
-            $payout->complete($externalId);
-            $balance->deduct($payout->amount());
-        } catch (PayoutGatewayException $e) {
-            $this->logger->warning('Payout gateway rejected the transfer', [
-                'payoutId' => $payout->id()->toString(),
-                'reason' => $e->getMessage(),
-            ]);
-
-            $payout->fail($e->getMessage());
-            $balance->release($payout->amount());
-        }
+        $this->attemptSendOrEscalate($payout, $balance);
 
         $this->payouts->save($payout);
         $this->balances->save($balance);
 
         return $payout->id();
+    }
+
+    /**
+     * Synchronous retry policy.
+     *
+     * Total attempts = MAX_RETRY_COUNT + 1 (initial + retries).
+     * On transient gateway failure the amount stays reserved.
+     * On permanent failure (retries exhausted) the payout is escalated
+     * and the reserved amount is moved to the seller's debt — the
+     * platform has already captured the buyer's payment, so the seller
+     * owes the platform the unfulfilled payout.
+     *
+     * In production this loop should be replaced with #[Delayed] retries
+     * and exponential backoff so the worker is not blocked.
+     */
+    private function attemptSendOrEscalate(Payout $payout, SellerBalance $balance): void
+    {
+        $attempts = Payout::MAX_RETRY_COUNT + 1;
+
+        for ($attempt = 0; $attempt < $attempts; $attempt++) {
+            try {
+                $externalId = $this->gateway->send($payout->amount(), $payout->method());
+                $payout->complete($externalId);
+                $balance->deduct($payout->amount());
+
+                return;
+            } catch (PayoutGatewayException $e) {
+                $reason = $e->getMessage();
+                $payout->fail($reason);
+
+                if ($payout->retryCount() >= Payout::MAX_RETRY_COUNT) {
+                    $payout->escalateForManualReview($reason);
+                    $balance->deduct($payout->amount());
+                    $balance->increaseDebt($payout->amount());
+
+                    $this->logger->error('Payout escalated after exhausting retries', [
+                        'payoutId' => $payout->id()->toString(),
+                        'retryCount' => $payout->retryCount(),
+                        'reason' => $reason,
+                    ]);
+
+                    return;
+                }
+
+                $payout->retry();
+
+                $this->logger->warning('Payout gateway failed, retrying', [
+                    'payoutId' => $payout->id()->toString(),
+                    'retryCount' => $payout->retryCount(),
+                    'reason' => $reason,
+                ]);
+            }
+        }
     }
 }
