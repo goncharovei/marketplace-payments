@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'services/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'services/**'
+      - '.github/workflows/ci.yml'
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_MEMORY_LIMIT: -1
+
+jobs:
+  test:
+    name: ${{ matrix.service }} (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [order, payment, payout]
+        php: ['8.3']
+        # Add '8.2' to the list above to run a second matrix dimension.
+        # See the notes at the bottom of this file before enabling.
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d test_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}/src
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo, pdo_pgsql, bcmath, intl, json, openssl, xml, curl, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Resolve composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ matrix.service }}-composer-${{ hashFiles(format('services/{0}/src/composer.lock', matrix.service)) }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-${{ matrix.service }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Prepare .env for CI
+        run: |
+          cp .env.example .env
+          sed -i "s|^DB_HOST=.*|DB_HOST=127.0.0.1|" .env
+          sed -i "s|^DB_PORT=.*|DB_PORT=5432|" .env
+          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=test_db|" .env
+          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=test_user|" .env
+          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=test_pass|" .env
+          sed -i "s|^RABBITMQ_HOST=.*|RABBITMQ_HOST=127.0.0.1|" .env
+          sed -i "s|^RABBITMQ_USER=.*|RABBITMQ_USER=guest|" .env
+          sed -i "s|^RABBITMQ_PASSWORD=.*|RABBITMQ_PASSWORD=guest|" .env
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run Pest
+        run: ./vendor/bin/pest --colors=always
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse --no-progress --error-format=github
+
+      - name: Run Deptrac
+        run: ./vendor/bin/deptrac analyse --no-progress
+
+      - name: Run Pint (dry-run)
+        run: ./vendor/bin/pint --test app/Domain app/Application app/Infrastructure app/Presentation tests
+
+  ci-success:
+    name: CI Success
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all matrix jobs passed
+        run: |
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "::error::One or more matrix jobs failed."
+            exit 1
+          fi
+          echo "All matrix jobs passed."
