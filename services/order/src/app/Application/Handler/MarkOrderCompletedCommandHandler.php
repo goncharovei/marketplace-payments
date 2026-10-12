@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\MarkOrderCompletedCommand;
-use App\Domain\Exception\OrderNotFoundException;
+use App\Domain\Model\OrderStatus;
 use App\Domain\Repository\OrderRepository;
 use App\Domain\ValueObject\OrderId;
 use DomainException;
@@ -26,17 +26,25 @@ final readonly class MarkOrderCompletedCommandHandler
         $order = $this->orders->findById($orderId);
 
         if ($order === null) {
-            // The order may not be committed yet (race with MarkOrderPaid).
-            // Throw so Ecotone retries the message.
-            $this->logger->warning('Order not found yet — will retry', [
-                'orderId' => $orderId->toString(),
+            // Permanent condition — ack so the message leaves the queue.
+            $this->logger->error('Order not found, MarkOrderCompletedCommand acked', [
+                'orderId' => $command->orderId,
             ]);
 
-            throw OrderNotFoundException::withId($orderId);
+            return;
         }
 
-        // The order may still be in PaymentProcessing if payment.completed
-        // has not been processed yet. Throw so the message is retried.
+        // Idempotency: payout.completed may be delivered more than once.
+        if ($order->status() === OrderStatus::Completed) {
+            $this->logger->info('Order already completed, MarkOrderCompletedCommand skipped', [
+                'orderId' => $command->orderId,
+            ]);
+
+            return;
+        }
+
+        // Transient: payment.completed has not been processed yet.
+        // Retry is legitimate here.
         if (! $order->status()->canBeCompleted()) {
             $this->logger->warning('Order not ready for completion yet — will retry', [
                 'orderId' => $orderId->toString(),
