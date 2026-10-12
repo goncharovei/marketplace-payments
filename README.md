@@ -1,3 +1,5 @@
+![CI](https://github.com/<user>/<repo>/actions/workflows/ci.yml/badge.svg)
+
 # Marketplace Payments
 
 Distributed payment platform for a marketplace, built with Laravel 11, Doctrine ORM, Ecotone, and RabbitMQ. Demonstrates DDD, CQRS, Event-Driven Architecture, and Saga orchestration.

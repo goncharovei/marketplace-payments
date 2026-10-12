@@ -96,8 +96,11 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
-      - name: Run migrations
+      - name: Run Laravel migrations
         run: php artisan migrate --force
+
+      - name: Run Doctrine migrations
+        run: php artisan doctrine:migrations:migrate --no-interaction
 
       - name: Run Pest
         run: ./vendor/bin/pest --colors=always
