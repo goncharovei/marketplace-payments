@@ -6,15 +6,18 @@ namespace App\Application\Handler;
 
 use App\Application\Command\MarkOrderCompletedCommand;
 use App\Application\Dto\PayoutCompletedMessage;
+use App\Application\Dto\PayoutCompletedSignal;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
+use Ecotone\Modelling\EventBus;
 use Psr\Log\LoggerInterface;
 
 final readonly class PayoutCompletedConsumer
 {
     public function __construct(
         private CommandBus $commandBus,
+        private EventBus $eventBus,
         private LoggerInterface $logger,
     ) {}
 
@@ -32,5 +35,7 @@ final readonly class PayoutCompletedConsumer
         $this->commandBus->send(new MarkOrderCompletedCommand(
             orderId: $message->orderId,
         ));
+
+        $this->eventBus->publish(PayoutCompletedSignal::now($message->orderId));
     }
 }

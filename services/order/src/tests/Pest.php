@@ -20,8 +20,7 @@ pest()->extend(TestCase::class)
         $this->em->getConnection()->beginTransaction();
 
         // Prevent Feature tests from publishing to real RabbitMQ.
-        // Tests that assert on distributed publishing override this mock
-        // via $this->app->instance(DistributedBus::class, ...).
+        // Tests that assert on distributed publishing override this mock.
         /** @var DistributedBus&MockInterface $distributedBus */
         $distributedBus = Mockery::mock(DistributedBus::class);
         $distributedBus->shouldReceive('convertAndPublishEvent')->zeroOrMoreTimes();

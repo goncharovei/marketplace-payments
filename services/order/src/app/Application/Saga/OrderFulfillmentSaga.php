@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Saga;
 
-use App\Application\Dto\CreatePayoutMessage;
+use App\Application\Dto\PayoutCompletedSignal;
 use App\Application\Dto\PayoutFailedSignal;
+use App\Application\Dto\PayoutRequested;
 use App\Domain\Event\OrderCancelled;
-use App\Domain\Event\OrderCompleted;
 use App\Domain\Event\OrderCreated;
 use App\Domain\Event\OrderPaid;
 use App\Domain\Event\OrderRefunded;
@@ -16,7 +16,7 @@ use App\Domain\Saga\OrderFulfillmentState;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\Attribute\Identifier;
 use Ecotone\Modelling\Attribute\Saga;
-use Ecotone\Modelling\DistributedBus;
+use Ecotone\Modelling\EventBus;
 
 /**
  * Orchestration Saga for the order fulfillment process.
@@ -55,32 +55,29 @@ final class OrderFulfillmentSaga
     }
 
     /**
-     * After the order is Paid, the Saga sends a command to the Payout
-     * Service asking it to pay the seller. This is where orchestration
-     * replaces the previous event-driven choreography.
+     * After the order is Paid, the Saga raises a PayoutRequested event.
+     * PayoutRequestedNotifier picks it up and forwards a distributed
+     * command to the Payout Service. This keeps the Saga decoupled from
+     * routing keys and target service names.
      */
     #[EventHandler]
-    public function whenOrderPaid(OrderPaid $event, DistributedBus $distributedBus): void
+    public function whenOrderPaid(OrderPaid $event, EventBus $eventBus): void
     {
         $this->state = OrderFulfillmentState::PAID->value;
 
-        $distributedBus->convertAndSendCommand(
-            targetServiceName: 'payout_service',
-            routingKey: 'payout.create',
-            command: new CreatePayoutMessage(
-                orderId: $event->orderId->toString(),
-                sellerId: $event->sellerId->toString(),
-                amount: $event->amount->amount(),
-                currency: $event->amount->currency(),
-            ),
-        );
+        $eventBus->publish(PayoutRequested::now(
+            orderId: $event->orderId->toString(),
+            sellerId: $event->sellerId->toString(),
+            amount: $event->amount->amount(),
+            currency: $event->amount->currency(),
+        ));
     }
 
     /**
      * Reached only after Payout Service confirms the transfer.
      */
     #[EventHandler]
-    public function whenOrderCompleted(OrderCompleted $event): void
+    public function whenPayoutCompleted(PayoutCompletedSignal $signal): void
     {
         $this->state = OrderFulfillmentState::COMPLETED->value;
     }

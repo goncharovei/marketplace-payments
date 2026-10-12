@@ -24,8 +24,8 @@ it('orchestrates the saga through happy path: created → paid → completed', f
     $commandBus->send(new StartPaymentCommand($orderId->toString()));
     $commandBus->send(new MarkOrderPaidCommand($orderId->toString()));
 
-    // After MarkOrderPaid the order stays in Paid — Saga is expected to send
-    // a payout.create command to Payout Service (verified in E2E).
+    // After MarkOrderPaid the order stays in Paid — Saga raises
+    // PayoutRequested, and the distributed command is sent by a notifier.
     $order = $this->em->find(Order::class, $orderId);
     expect($order->status())->toBe(OrderStatus::Paid);
 
