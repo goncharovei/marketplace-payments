@@ -27,3 +27,4 @@ yarn-error.log
 /.deptrac.cache
 /.phpstan.cache
 /.php-cs-fixer.cache
+/storage/api-docs/
