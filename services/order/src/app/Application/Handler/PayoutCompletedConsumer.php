@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\MarkOrderCompletedCommand;
-use App\Application\Dto\PayoutCompletedMessage;
 use App\Application\Dto\PayoutCompletedSignal;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\EventBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\PayoutCompletedMessage;
 
 final readonly class PayoutCompletedConsumer
 {

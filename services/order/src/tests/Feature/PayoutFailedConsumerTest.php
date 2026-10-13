@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Application\Dto\PayoutFailedMessage;
 use App\Application\Dto\PayoutFailedSignal;
 use App\Application\Handler\PayoutFailedConsumer;
 use App\Domain\ValueObject\OrderId;
 use Ecotone\Modelling\EventBus;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\PayoutFailedMessage;
 
 it('logs payout.failed and publishes an internal signal', function (): void {
     $spy = Mockery::spy(LoggerInterface::class);

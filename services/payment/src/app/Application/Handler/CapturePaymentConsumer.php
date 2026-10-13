@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\CapturePaymentCommand;
-use App\Application\Dto\CapturePaymentMessage;
 use App\Domain\Exception\PaymentNotFoundException;
 use App\Domain\Repository\PaymentRepository;
 use App\Domain\ValueObject\OrderId;
@@ -13,6 +12,7 @@ use Ecotone\Modelling\Attribute\CommandHandler;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\CapturePaymentMessage;
 
 final readonly class CapturePaymentConsumer
 {

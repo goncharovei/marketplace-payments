@@ -6,11 +6,11 @@ use App\Application\Command\MarkOrderCompletedCommand;
 use App\Application\Command\MarkOrderPaidCommand;
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
-use App\Application\Dto\PayoutFailedMessage;
 use App\Application\Handler\PayoutFailedConsumer;
 use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
 use Ecotone\Modelling\CommandBus;
+use Shared\Contracts\PayoutFailedMessage;
 
 it('orchestrates the saga through happy path: created → paid → completed', function (): void {
     $commandBus = app(CommandBus::class);

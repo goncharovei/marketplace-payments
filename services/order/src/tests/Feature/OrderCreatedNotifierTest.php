@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Application\Command\PlaceOrderCommand;
-use App\Application\Dto\OrderCreatedMessage;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\OrderCreatedMessage;
 
 it('publishes order.created to the distributed bus', function (): void {
     /** @var DistributedBus&MockInterface $distributedBus */

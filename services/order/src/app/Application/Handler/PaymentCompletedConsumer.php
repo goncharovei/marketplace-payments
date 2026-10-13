@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\MarkOrderPaidCommand;
-use App\Application\Dto\PaymentCompletedMessage;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\PaymentCompletedMessage;
 
 final readonly class PaymentCompletedConsumer
 {

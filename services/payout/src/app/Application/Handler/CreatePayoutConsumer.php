@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\CreatePayoutCommand;
-use App\Application\Dto\CreatePayoutMessage;
 use Ecotone\Modelling\Attribute\CommandHandler;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\CreatePayoutMessage;
 
 final readonly class CreatePayoutConsumer
 {

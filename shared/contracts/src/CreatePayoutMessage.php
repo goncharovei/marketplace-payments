@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto;
+namespace Shared\Contracts;
 
+/**
+ * Cross-service contract: Order Service → Payout Service.
+ *
+ * Command sent by the Saga once the order is paid.
+ */
 final readonly class CreatePayoutMessage
 {
     public function __construct(

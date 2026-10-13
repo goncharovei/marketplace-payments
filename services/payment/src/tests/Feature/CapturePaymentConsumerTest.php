@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Application\Command\InitiatePaymentCommand;
-use App\Application\Dto\CapturePaymentMessage;
 use App\Application\Handler\CapturePaymentConsumer;
 use App\Domain\Model\Payment;
 use App\Domain\Model\PaymentStatus;
 use App\Domain\ValueObject\OrderId;
 use App\Domain\ValueObject\PaymentId;
 use Ecotone\Modelling\CommandBus;
+use Shared\Contracts\CapturePaymentMessage;
 
 function initiatePaymentForOrder(string $orderId, int $amount = 1000): PaymentId
 {

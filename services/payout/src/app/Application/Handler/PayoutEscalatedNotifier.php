@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Handler;
 
-use App\Application\Dto\PayoutFailedMessage;
 use App\Domain\Event\PayoutEscalated;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\DistributedBus;
+use Shared\Contracts\PayoutFailedMessage;
 
 /**
  * Publishes payout.failed to the Order Service only when the payout has

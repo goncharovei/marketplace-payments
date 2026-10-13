@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto;
+namespace Shared\Contracts;
 
+/**
+ * Cross-service contract: Payment Service → Order Service.
+ *
+ * Published when a payment is captured.
+ */
 final readonly class PaymentCompletedMessage
 {
     public function __construct(

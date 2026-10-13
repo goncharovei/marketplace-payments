@@ -10,6 +10,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./services/order/src:/var/www
+      - ./shared:/shared:ro
     networks:
       - mp-network
     depends_on:
@@ -72,6 +73,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./services/payment/src:/var/www
+      - ./shared:/shared:ro
     networks:
       - mp-network
     depends_on:
@@ -134,6 +136,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./services/payout/src:/var/www
+      - ./shared:/shared:ro
     networks:
       - mp-network
     depends_on:

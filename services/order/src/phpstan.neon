@@ -5,7 +5,6 @@ parameters:
     paths:
         - app
         - tests
-
     level: 8
 
     # Exclude standard Laravel code that is not part of our DDD layers yet.

@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto;
+namespace Shared\Contracts;
 
+/**
+ * Cross-service contract: Payout Service → Order Service.
+ *
+ * Published when a payout is successfully sent to the seller.
+ */
 final readonly class PayoutCompletedMessage
 {
     public function __construct(

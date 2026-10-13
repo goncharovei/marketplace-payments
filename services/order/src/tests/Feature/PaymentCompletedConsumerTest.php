@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
-use App\Application\Dto\PaymentCompletedMessage;
 use App\Application\Handler\PaymentCompletedConsumer;
 use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
 use Ecotone\Modelling\CommandBus;
+use Shared\Contracts\PaymentCompletedMessage;
 
 it('marks an order as paid when payment.completed is received', function (): void {
     $orderId = app(CommandBus::class)->send(new PlaceOrderCommand(

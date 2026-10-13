@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Application\Command\CreatePayoutCommand;
-use App\Application\Dto\PayoutFailedMessage;
 use App\Domain\Model\Payout;
 use App\Domain\ValueObject\OrderId;
 use App\Infrastructure\Service\FakePayoutGateway;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\PayoutFailedMessage;
 
 it('publishes payout.failed once after retries are exhausted', function (): void {
     app(FakePayoutGateway::class)->failFor(

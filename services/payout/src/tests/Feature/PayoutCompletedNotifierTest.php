@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Application\Command\CreatePayoutCommand;
-use App\Application\Dto\PayoutCompletedMessage;
 use App\Domain\ValueObject\OrderId;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\PayoutCompletedMessage;
 
 it('publishes payout.completed when a payout is completed', function (): void {
     $orderId = OrderId::generate()->toString();

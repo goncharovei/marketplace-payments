@@ -5,12 +5,12 @@ declare(strict_types=1);
 use App\Application\Command\MarkOrderPaidCommand;
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
-use App\Application\Dto\PayoutCompletedMessage;
 use App\Application\Handler\PayoutCompletedConsumer;
 use App\Domain\Model\Order;
 use App\Domain\Model\OrderStatus;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\PayoutCompletedMessage;
 
 it('marks order as completed and logs when payout.completed is received', function (): void {
     $spy = Mockery::spy(LoggerInterface::class);

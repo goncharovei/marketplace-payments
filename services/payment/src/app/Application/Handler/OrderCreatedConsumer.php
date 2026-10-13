@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Handler;
 
 use App\Application\Command\InitiatePaymentCommand;
-use App\Application\Dto\OrderCreatedMessage;
 use Ecotone\Modelling\Attribute\Distributed;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\CommandBus;
 use Psr\Log\LoggerInterface;
+use Shared\Contracts\OrderCreatedMessage;
 
 final readonly class OrderCreatedConsumer
 {

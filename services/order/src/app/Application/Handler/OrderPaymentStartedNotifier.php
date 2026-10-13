@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Handler;
 
-use App\Application\Dto\CapturePaymentMessage;
 use App\Domain\Event\PaymentStarted;
 use Ecotone\Modelling\Attribute\EventHandler;
 use Ecotone\Modelling\DistributedBus;
+use Shared\Contracts\CapturePaymentMessage;
 
 final readonly class OrderPaymentStartedNotifier
 {

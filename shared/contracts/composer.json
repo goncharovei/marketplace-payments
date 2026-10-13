@@ -1,0 +1,23 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "marketplace/contracts",
+  "description": "Integration contracts (DTOs) shared between marketplace services.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Shared\\Contracts\\": "src/"
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "8.3.0"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

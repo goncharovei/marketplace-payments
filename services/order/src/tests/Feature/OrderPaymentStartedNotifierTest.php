@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
-use App\Application\Dto\CapturePaymentMessage;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\CapturePaymentMessage;
 
 it('sends payment.capture command to payment_service on PaymentStarted', function (): void {
     /** @var DistributedBus&MockInterface $distributedBus */

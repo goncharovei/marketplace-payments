@@ -1,6 +1,7 @@
 deptrac:
   paths:
     - ./app
+    - ../../shared/contracts/src
   exclude_files:
     - '#.*test.*#'
     - '#.*Test\.php$#'
@@ -80,6 +81,11 @@ deptrac:
         - type: classLike
           value: ^Psr\\.*
 
+    - name: SharedContracts
+      collectors:
+          - type: classLike
+            value: ^Shared\\Contracts\\.*
+
   ruleset:
     Domain:
       - Domain
@@ -91,6 +97,7 @@ deptrac:
       - Application
       - EcotoneMessaging
       - Psr
+      - SharedContracts
 
     Infrastructure:
       - Domain
@@ -99,6 +106,7 @@ deptrac:
       - Framework
       - DoctrineMapping
       - EcotoneMessaging
+      - SharedContracts
 
     Presentation:
       - Domain
@@ -124,3 +132,6 @@ deptrac:
 
     EcotoneMessaging:
       - EcotoneMessaging
+
+    SharedContracts:
+      - SharedContracts

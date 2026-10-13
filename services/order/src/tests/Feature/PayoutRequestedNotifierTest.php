@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Application\Command\MarkOrderPaidCommand;
 use App\Application\Command\PlaceOrderCommand;
 use App\Application\Command\StartPaymentCommand;
-use App\Application\Dto\CreatePayoutMessage;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\CreatePayoutMessage;
 
 it('sends payout.create command to payout_service when order is paid', function (): void {
     /** @var DistributedBus&MockInterface $distributedBus */

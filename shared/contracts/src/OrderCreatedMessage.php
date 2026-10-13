@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto;
+namespace Shared\Contracts;
 
 /**
- * Message published to the Distributed Bus when an order is created.
+ * Cross-service contract: Order Service → Payment Service.
  *
- * This is a contract between Order Service and other services
- * (Payment, Payout). Keep it stable: it is serialized to JSON.
+ * Published when an order is created. Payment Service consumes it to initiate a payment.
  */
 final readonly class OrderCreatedMessage
 {

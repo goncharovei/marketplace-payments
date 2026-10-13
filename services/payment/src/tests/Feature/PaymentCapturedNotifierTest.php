@@ -5,11 +5,11 @@ declare(strict_types=1);
 use App\Application\Command\AuthorizePaymentCommand;
 use App\Application\Command\CapturePaymentCommand;
 use App\Application\Command\InitiatePaymentCommand;
-use App\Application\Dto\PaymentCompletedMessage;
 use App\Domain\ValueObject\OrderId;
 use Ecotone\Modelling\CommandBus;
 use Ecotone\Modelling\DistributedBus;
 use Mockery\MockInterface;
+use Shared\Contracts\PaymentCompletedMessage;
 
 it('publishes payment.completed after capture', function (): void {
     $orderId = OrderId::generate()->toString();
