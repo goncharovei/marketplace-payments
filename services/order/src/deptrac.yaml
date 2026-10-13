@@ -1,7 +1,7 @@
 deptrac:
   paths:
     - ./app
-    - ../../shared/contracts/src
+    - ../../../shared/contracts/src
   exclude_files:
     - '#.*test.*#'
     - '#.*Test\.php$#'
