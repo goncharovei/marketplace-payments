@@ -1,53 +1,55 @@
-![CI](https://github.com/<user>/<repo>/actions/workflows/ci.yml/badge.svg)
-
 # Marketplace Payments
 
-Distributed payment platform for a marketplace, built with Laravel 11, Doctrine ORM, Ecotone, and RabbitMQ. Demonstrates DDD, CQRS, Event-Driven Architecture, and Saga orchestration.
+A distributed payment system for a marketplace, built with **PHP 8.3**,
+**Laravel 11**, **Ecotone CQRS**, **Doctrine ORM**, **RabbitMQ**, and
+**PostgreSQL 16**.
+
+The system models the full order fulfilment lifecycle across three
+microservices — Order, Payment, and Payout — orchestrated by an Ecotone Saga.
+Each service is a separate bounded context, owns its own database, and
+communicates with the others exclusively through RabbitMQ via integration
+contracts.
+
+> Portfolio project demonstrating production-grade PHP engineering:
+> Domain-Driven Design, CQRS, distributed messaging, orchestration Sagas,
+> and automated quality gates.
+
+[![CI](https://github.com/goncharovei/marketplace-payments/actions/workflows/ci.yml/badge.svg)](https://github.com/goncharovei/marketplace-payments/actions/workflows/ci.yml)
+
+---
+
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Bounded Contexts](#bounded-contexts)
+- [Order Fulfilment Saga](#order-fulfilment-saga)
+- [Tech Stack & Documentation](#tech-stack--documentation)
+- [Running Locally](#running-locally)
+- [Testing & Quality Gates](#testing--quality-gates)
+- [CI/CD](#cicd)
+- [Project Structure](#project-structure)
+- [Key Design Decisions](#key-design-decisions)
+- [Deliberately Out of Scope](#deliberately-out-of-scope)
+- [License](#license)
+
+---
 
 ## Architecture
 
-Three services, each with its own PostgreSQL database:
+### System Context
 
-- **Order Service** — Order aggregate, saga orchestration.
-- **Payment Service** — Payment processing, refunds.
-- **Payout Service** — Seller payouts, balances.
+Three business services sit behind the Marketplace platform. A buyer places
+an order and pays; a seller receives a payout. Each step is a state transition
+owned by a different bounded context.
 
-Services communicate via RabbitMQ through a Distributed Bus.
+```mermaid
+flowchart LR
+    Buyer([Buyer])
+    Seller([Seller])
+    Platform[Marketplace Payments]
+    Gateway[(Payment Gateway)]
 
-## Stack
-
-- PHP 8.3, Laravel 11
-- Doctrine ORM (Data Mapper)
-- Ecotone (CQRS, Event Bus, Saga)
-- PostgreSQL 16 (one DB per service)
-- RabbitMQ 3.13
-- Pest (tests), PHPStan level 8, Deptrac, Pint
-- Docker Compose
-
-## Status
-
-- ✅ Order Service: Domain, CQRS, Event Bus, Doctrine persistence, 48 tests
-- 🚧 Payment Service: pending
-- 🚧 Payout Service: pending
-- 🚧 RabbitMQ transport: pending
-- 🚧 Saga orchestration: pending
-
-## Quick Start
-
-```bash
-git clone https://github.com/goncharovei/marketplace-payments.git
-cd marketplace-payments
-cp .env.example .env
-# edit .env - set DB and RabbitMQ passwords
-docker compose up -d
-```
-
-Services:
-- http://localhost:8001 — Order
-- http://localhost:8002 — Payment
-- http://localhost:8003 — Payout
-- http://localhost:15672 — RabbitMQ UI
-
-## Documentation
-
-See the [Wiki](https://github.com/goncharovei/marketplace-payments/wiki).
+    Buyer -->|places order<br/>and pays| Platform
+    Seller -->|receives payout| Platform
+    Platform -->|charges card| Gateway
+    Platform -->|transfers to bank| Gateway
