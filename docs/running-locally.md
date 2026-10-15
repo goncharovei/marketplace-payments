@@ -149,12 +149,6 @@ docker compose exec payment-app php artisan ecotone:run payment_service -vvv
 docker compose exec payout-app php artisan ecotone:run payout_service -vvv
 ```
 
-Each terminal will print:
-
-```
-Message Consumer starting to consume messages
-```
-
 The `-vvv` flag increases log verbosity. Without a running consumer, the
 service silently accumulates messages in RabbitMQ and nothing progresses.
 
@@ -184,7 +178,72 @@ is `distributed_order_service` (or `_payment_service`, `_payout_service`).
 
 ## E2E Happy Path
 
-Complete walkthrough of a successful order: from placement to completion.
+The happy path — order placement to completion — can be exercised either
+manually (see below) or through the automated smoke-test script.
+
+### Automated test
+
+The repository ships a self-contained script that:
+
+1. Verifies the Docker stack is running.
+2. Optionally cleans RabbitMQ queues, Ecotone state, and business data.
+3. Starts the three Ecotone consumers in the background.
+4. Places an order and starts payment.
+5. Polls the saga until it reaches `completed` (30-second timeout).
+6. Asserts the final state of `orders`, `payments`, `payouts`, and
+   `seller_balances`.
+7. Stops the consumers and reports pass / fail.
+
+Run it from the project root:
+
+```bash
+./scripts/e2e-happy-path.sh
+```
+
+Flags:
+
+| Flag | Effect |
+|---|---|
+| *(none)* | Clean state, run, stop consumers |
+| `--no-clean` | Skip the cleanup step — use when running twice in a row |
+| `--keep-runn` | Leave consumers running after the script exits (for debugging) |
+| `-h`, `--help` | Print usage |
+
+Exit codes:
+
+| Code | Meaning |
+|---|---|
+| `0` | Happy path succeeded |
+| `1` | A prerequisite container is not running |
+| `2` | Saga did not reach `completed` within the timeout |
+| `3` | Final-state assertion failed |
+
+Example — a successful run ends with:
+
+```
+  orders.status        completed
+  payments.status      captured
+  payouts.status       completed
+  payouts.retry_count  0
+  balance.available    0
+  balance.reserved     0
+  balance.debt         0
+  saga.state           completed
+
+  ✓ All assertions passed
+
+  Happy path succeeded.
+  Order → Payment → Payout → COMPLETED
+```
+
+The script is safe to run in CI as an end-to-end smoke test — the exit
+codes are deterministic and consumer output is captured to a temporary
+directory (removed on exit unless `--keep-runn` is set).
+
+### Manual walkthrough
+
+If you want to run the flow step by step and observe each state, follow the
+steps below.
 
 ### Step 1 — Place an order
 
@@ -277,7 +336,7 @@ Expected values:
 | `seller_balances` | `reserved` | `{amount: 0, currency: RUB}` |
 | `seller_balances` | `debt` | `{amount: 0, currency: RUB}` |
 
-### Step 5 — Via REST API
+### Via REST API
 
 The same flow can be exercised via HTTP:
 
