@@ -69,13 +69,13 @@ services, no shared database, no shared repository code.
 ```mermaid
 flowchart TB
     subgraph Client["Clients"]
-        Browser[Swagger UI / cURL]
+        Browser["Swagger UI / cURL"]
     end
 
     subgraph API["API Layer (nginx)"]
-        NginxOrder[Order :8001]
-        NginxPay[Payment :8002]
-        NginxPay out[Payout :8003]
+        NginxOrder["Order :8001"]
+        NginxPay["Payment :8002"]
+        NginxPayout["Payout :8003"]
     end
 
     subgraph Services["Service Layer"]
@@ -90,7 +90,7 @@ flowchart TB
         DBPayout[(payout_db)]
     end
 
-    MQ{{RabbitMQ<br/>exchange: ecotone.distributed}}
+    MQ{{"RabbitMQ<br/>exchange: ecotone.distributed"}}
 
     Browser --> NginxOrder
     Browser --> NginxPay
