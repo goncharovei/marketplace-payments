@@ -30,7 +30,7 @@ it('is idempotent — second MarkOrderPaid is skipped', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 
     $spy->shouldHaveReceived('info')
         ->withArgs(fn (string $message): bool => $message === 'Order not in payment_processing, MarkOrderPaidCommand skipped')

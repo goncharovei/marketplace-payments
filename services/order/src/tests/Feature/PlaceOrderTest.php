@@ -29,7 +29,7 @@ it('creates a new order via the command bus', function (): void {
     $order = $this->em->find(Order::class, $orderId);
 
     expect($order)->not->toBeNull()
-        ->and($order->status())->toBe(OrderStatus::Created)
+        ->and($order->status())->toBe(OrderStatus::CREATED)
         ->and($order->totalAmount()->amount())->toBe(2500)
         ->and($order->items()->count())->toBe(2);
 });

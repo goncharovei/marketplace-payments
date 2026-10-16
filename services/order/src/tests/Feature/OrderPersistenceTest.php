@@ -44,7 +44,7 @@ it('persists and reloads an order with all value objects intact', function (): v
 
     expect($reloaded)->not->toBeNull()
         ->and($reloaded->id()->equals($orderId))->toBeTrue()
-        ->and($reloaded->status())->toBe(OrderStatus::Created)
+        ->and($reloaded->status())->toBe(OrderStatus::CREATED)
         ->and($reloaded->totalAmount()->amount())->toBe($expectedTotal)
         ->and($reloaded->totalAmount()->currency())->toBe('RUB')
         ->and($reloaded->items()->count())->toBe(2);
@@ -63,7 +63,7 @@ it('persists status changes', function (): void {
 
     $reloaded = $this->em->find(Order::class, $orderId);
 
-    expect($reloaded->status())->toBe(OrderStatus::Paid);
+    expect($reloaded->status())->toBe(OrderStatus::PAID);
 });
 
 it('preserves item details after reload', function (): void {

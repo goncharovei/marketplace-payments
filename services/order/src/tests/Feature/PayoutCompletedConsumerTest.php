@@ -51,5 +51,5 @@ it('marks order as completed and logs when payout.completed is received', functi
     // Assert: order transitioned to Completed.
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Completed);
+    expect($order->status())->toBe(OrderStatus::COMPLETED);
 });

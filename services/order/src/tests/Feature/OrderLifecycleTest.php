@@ -33,7 +33,7 @@ it('runs full order lifecycle up to Paid (Saga drives the rest)', function (): v
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 });
 
 it('cancels an unpaid order', function (): void {
@@ -44,7 +44,7 @@ it('cancels an unpaid order', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Cancelled);
+    expect($order->status())->toBe(OrderStatus::CANCELLED);
 });
 
 it('refunds a paid order when cancelled', function (): void {
@@ -57,7 +57,7 @@ it('refunds a paid order when cancelled', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Refunded);
+    expect($order->status())->toBe(OrderStatus::REFUNDED);
 });
 
 it('throws when starting payment for non-existent order', function (): void {

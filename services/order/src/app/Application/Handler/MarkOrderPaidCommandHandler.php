@@ -36,7 +36,7 @@ final readonly class MarkOrderPaidCommandHandler
 
         // Idempotency: payment.completed may be delivered more than once.
         // markAsPaid() would throw DomainException on non-Processing status.
-        if ($order->status() !== OrderStatus::PaymentProcessing) {
+        if ($order->status() !== OrderStatus::PAYMENT_PROCESSING) {
             $this->logger->info('Order not in payment_processing, MarkOrderPaidCommand skipped', [
                 'orderId' => $command->orderId,
                 'status' => $order->status()->value,

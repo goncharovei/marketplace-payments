@@ -30,5 +30,5 @@ it('marks an order as paid when payment.completed is received', function (): voi
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 });

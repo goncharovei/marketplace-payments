@@ -32,7 +32,7 @@ it('is idempotent — second MarkOrderCompleted is skipped', function (): void {
 
     $order = $this->em->find(Order::class, $orderId);
 
-    expect($order->status())->toBe(OrderStatus::Completed);
+    expect($order->status())->toBe(OrderStatus::COMPLETED);
 
     $spy->shouldHaveReceived('info')
         ->withArgs(fn (string $message): bool => $message === 'Order already completed, MarkOrderCompletedCommand skipped')

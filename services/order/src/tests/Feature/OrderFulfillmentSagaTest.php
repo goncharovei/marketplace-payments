@@ -29,13 +29,13 @@ it('orchestrates the saga through happy path: created → paid → completed', f
     // After MarkOrderPaid the order stays in Paid — Saga raises
     // PayoutRequested, and the distributed command is sent by a notifier.
     $order = $this->em->find(Order::class, $orderId);
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 
     // Simulate Payout Service's success response.
     $commandBus->send(new MarkOrderCompletedCommand($orderId->toString()));
 
     $order = $this->em->find(Order::class, $orderId);
-    expect($order->status())->toBe(OrderStatus::Completed);
+    expect($order->status())->toBe(OrderStatus::COMPLETED);
 });
 
 it('transitions the saga to payout_failed when a payout.failed signal arrives', function (): void {
@@ -69,5 +69,5 @@ it('transitions the saga to payout_failed when a payout.failed signal arrives', 
 
     // The order itself stays Paid — the buyer's money is not refunded.
     $order = $this->em->find(Order::class, $orderId);
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 });

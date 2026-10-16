@@ -9,35 +9,35 @@ namespace App\Domain\Model;
  */
 enum OrderStatus: string
 {
-    case Created = 'created';
-    case PaymentProcessing = 'payment_processing';
-    case Paid = 'paid';
-    case Completed = 'completed';
-    case Cancelled = 'cancelled';
-    case Refunded = 'refunded';
+    case CREATED = 'created';
+    case PAYMENT_PROCESSING = 'payment_processing';
+    case PAID = 'paid';
+    case COMPLETED = 'completed';
+    case CANCELLED = 'cancelled';
+    case REFUNDED = 'refunded';
 
     public function isFinal(): bool
     {
         return match ($this) {
-            self::Completed, self::Cancelled, self::Refunded => true,
+            self::COMPLETED, self::CANCELLED, self::REFUNDED => true,
             default => false,
         };
     }
 
     public function canBePaid(): bool
     {
-        return $this === self::Created;
+        return $this === self::CREATED;
     }
 
     public function canBeCompleted(): bool
     {
-        return $this === self::Paid;
+        return $this === self::PAID;
     }
 
     public function canBeCancelled(): bool
     {
         return match ($this) {
-            self::Created, self::PaymentProcessing, self::Paid => true,
+            self::CREATED, self::PAYMENT_PROCESSING, self::PAID => true,
             default => false,
         };
     }

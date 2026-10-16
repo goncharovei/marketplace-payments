@@ -44,7 +44,7 @@ it('marks order as completed and records OrderCompleted', function (): void {
 
     $order->markAsCompleted();
 
-    expect($order->status())->toBe(OrderStatus::Completed);
+    expect($order->status())->toBe(OrderStatus::COMPLETED);
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)
@@ -60,7 +60,7 @@ it('cannot mark as completed without prior payment', function (): void {
 it('places an order and records OrderCreated', function (): void {
     $order = placeTestOrder();
 
-    expect($order->status())->toBe(OrderStatus::Created)
+    expect($order->status())->toBe(OrderStatus::CREATED)
         ->and($order->totalAmount()->amount())->toBe(2500);
 
     $events = $order->releaseEvents();
@@ -83,7 +83,7 @@ it('starts payment and records PaymentStarted', function (): void {
 
     $order->startPayment();
 
-    expect($order->status())->toBe(OrderStatus::PaymentProcessing);
+    expect($order->status())->toBe(OrderStatus::PAYMENT_PROCESSING);
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)
@@ -97,7 +97,7 @@ it('marks order as paid', function (): void {
 
     $order->markAsPaid();
 
-    expect($order->status())->toBe(OrderStatus::Paid);
+    expect($order->status())->toBe(OrderStatus::PAID);
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)
@@ -123,7 +123,7 @@ it('cancels a created order and records OrderCancelled', function (): void {
 
     $order->cancel('Buyer changed their mind');
 
-    expect($order->status())->toBe(OrderStatus::Cancelled);
+    expect($order->status())->toBe(OrderStatus::CANCELLED);
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)
@@ -138,7 +138,7 @@ it('refunds a paid order on cancel', function (): void {
 
     $order->cancel('Out of stock');
 
-    expect($order->status())->toBe(OrderStatus::Refunded);
+    expect($order->status())->toBe(OrderStatus::REFUNDED);
 
     $events = $order->releaseEvents();
     expect($events)->toHaveCount(1)

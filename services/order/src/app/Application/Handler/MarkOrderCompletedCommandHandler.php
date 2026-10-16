@@ -35,7 +35,7 @@ final readonly class MarkOrderCompletedCommandHandler
         }
 
         // Idempotency: payout.completed may be delivered more than once.
-        if ($order->status() === OrderStatus::Completed) {
+        if ($order->status() === OrderStatus::COMPLETED) {
             $this->logger->info('Order already completed, MarkOrderCompletedCommand skipped', [
                 'orderId' => $command->orderId,
             ]);

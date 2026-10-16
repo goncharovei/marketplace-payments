@@ -89,7 +89,7 @@ final class Order
             $buyerId,
             $sellerId,
             $items,
-            OrderStatus::Created,
+            OrderStatus::CREATED,
             $now,
             $now,
         );
@@ -113,7 +113,7 @@ final class Order
             ));
         }
 
-        $this->status = OrderStatus::PaymentProcessing;
+        $this->status = OrderStatus::PAYMENT_PROCESSING;
         $this->touch();
 
         $this->recordEvent(PaymentStarted::now($this->id, $this->totalAmount()));
@@ -121,14 +121,14 @@ final class Order
 
     public function markAsPaid(): void
     {
-        if ($this->status !== OrderStatus::PaymentProcessing) {
+        if ($this->status !== OrderStatus::PAYMENT_PROCESSING) {
             throw new DomainException(sprintf(
                 'Cannot mark order as paid from status "%s".',
                 $this->status->value,
             ));
         }
 
-        $this->status = OrderStatus::Paid;
+        $this->status = OrderStatus::PAID;
         $this->touch();
 
         $this->recordEvent(OrderPaid::now(
@@ -147,7 +147,7 @@ final class Order
             ));
         }
 
-        $this->status = OrderStatus::Completed;
+        $this->status = OrderStatus::COMPLETED;
         $this->touch();
 
         $this->recordEvent(OrderCompleted::now(
@@ -166,9 +166,9 @@ final class Order
             ));
         }
 
-        $wasPaid = $this->status === OrderStatus::Paid;
+        $wasPaid = $this->status === OrderStatus::PAID;
 
-        $this->status = $wasPaid ? OrderStatus::Refunded : OrderStatus::Cancelled;
+        $this->status = $wasPaid ? OrderStatus::REFUNDED : OrderStatus::CANCELLED;
         $this->touch();
 
         if ($wasPaid) {
