@@ -81,6 +81,7 @@ MARKER="/var/www/storage/.migrated"
 if [ ! -f "$MARKER" ]; then
     echo "==> [${SERVICE_NAME}] Running migrations (first run)..."
     php artisan migrate --force
+    php artisan doctrine:migrations:migrate --no-interaction
     touch "$MARKER"
     echo "==> [${SERVICE_NAME}] Migrations done."
 else

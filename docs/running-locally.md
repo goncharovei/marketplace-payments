@@ -101,29 +101,7 @@ If a `*-db` container is stuck in `(health: starting)` for more than
 docker compose logs order-db
 ```
 
-### 4. Run migrations
-
-Each service has two independent migration sets:
-
-- **Laravel migrations** — framework tables (`cache`, `jobs`, `sessions`,
-  `users`). Run with `php artisan migrate`.
-- **Doctrine migrations** — aggregate tables (`orders`, `payments`,
-  `payouts`, `seller_balances`). Run with `php artisan doctrine:migrations:migrate`.
-
-Run both for all three services:
-
-```bash
-for svc in order payment payout; do
-  echo "=== ${svc} ==="
-  docker compose exec ${svc}-app php artisan migrate --force
-  docker compose exec ${svc}-app php artisan doctrine:migrations:migrate --no-interaction
-done
-```
-
-The `--force` flag skips the production-environment confirmation prompt.
-The `--no-interaction` flag does the same for Doctrine migrations.
-
-### 5. Start Ecotone consumers
+### 4. Start Ecotone consumers
 
 Each service needs a long-running consumer process to handle asynchronous
 messages. This process is **not** started by `docker compose up` — it must
@@ -542,7 +520,7 @@ docker compose exec rabbitmq rabbitmqctl list_queues name messages
 ```
 
 If a queue shows non-zero messages and a growing number, no consumer is
-draining it. Start the consumer for that service (see [Step 5](#5-start-ecotone-consumers)).
+draining it. Start the consumer for that service (see [Step 4](#4-start-ecotone-consumers)).
 
 ### Order stays in `payment_processing` forever
 

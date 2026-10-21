@@ -31,10 +31,6 @@ cp .env.example .env
 docker compose up -d
 docker compose ps   # wait until every service is healthy
 
-for svc in order payment payout; do
-  docker compose exec ${svc}-app php artisan migrate --force
-  docker compose exec ${svc}-app php artisan doctrine:migrations:migrate --no-interaction
-done
 ```
 
 Then open three terminals and run a consumer per service:
