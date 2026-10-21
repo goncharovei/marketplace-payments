@@ -30,8 +30,8 @@ cp .env.example .env
 
 docker compose up -d
 docker compose ps   # wait until every service is healthy
-
 ```
+
 
 Then open three terminals and run a consumer per service:
 
